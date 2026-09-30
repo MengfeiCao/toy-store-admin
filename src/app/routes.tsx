@@ -11,6 +11,7 @@ import { SalesOrderEditPage } from '../features/sales/SalesOrderEditPage';
 import { SalesOrderDetailPage } from '../features/sales/SalesOrderDetailPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { UserManagementPage } from '../features/users/UserManagementPage';
+import { SupplierListPage } from '../features/suppliers/SupplierListPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -39,6 +40,7 @@ export function AppRoutes() {
           <Route path="/stock-in" element={<StockInPage />} />
           <Route path="/records" element={<StockLedgerPage />} />
           <Route path="/customers" element={<CustomerListPage />} />
+          <Route path="/suppliers" element={<SupplierListPage />} />
           <Route path="/sales" element={<SalesOrderListPage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
