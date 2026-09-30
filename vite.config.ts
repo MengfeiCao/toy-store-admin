@@ -7,6 +7,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     globals: true,
-    exclude: ['supabase/functions/**', 'node_modules/**'],
+    exclude: ['e2e/**', 'supabase/functions/**', 'node_modules/**'],
   },
 });
