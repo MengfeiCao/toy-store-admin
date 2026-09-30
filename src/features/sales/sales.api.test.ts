@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { cancelSalesOrder, getSalesOrder, listSalesOrders, saveSalesOrder } from './sales.api';
+import { cancelSalesOrder, getSalesOrder, listSalesOrders, markSalesOrderPaid, revertSalesOrderPayment, saveSalesOrder, shipSalesOrder } from './sales.api';
 
 const mocks = vi.hoisted(() => ({ rpc: vi.fn() }));
 vi.mock('../../lib/supabase', () => ({ supabase: mocks }));
@@ -26,5 +26,20 @@ describe('sales api', () => {
     mocks.rpc.mockResolvedValue({ data: null, error: null });
     await cancelSalesOrder('o1');
     expect(mocks.rpc).toHaveBeenCalledWith('cancel_sales_order', { p_order_id: 'o1' });
+  });
+
+  it('rechecks_order_after_unknown_shipment_result', async () => {
+    mocks.rpc.mockClear();
+    mocks.rpc.mockRejectedValueOnce(new Error('timeout')).mockResolvedValueOnce({ data: { id: 'o1', status: 'completed' }, error: null });
+    await shipSalesOrder('o1');
+    expect(mocks.rpc).toHaveBeenNthCalledWith(1, 'ship_sales_order', { p_order_id: 'o1' });
+  });
+
+  it('marks_and_reverts_payment_with_explicit_methods', async () => {
+    mocks.rpc.mockResolvedValue({ data: null, error: null });
+    await markSalesOrderPaid('o1', 'wechat');
+    await revertSalesOrderPayment('o1');
+    expect(mocks.rpc).toHaveBeenCalledWith('mark_sales_order_paid', { p_order_id: 'o1', p_payment_method: 'wechat' });
+    expect(mocks.rpc).toHaveBeenCalledWith('revert_sales_order_payment', { p_order_id: 'o1' });
   });
 });

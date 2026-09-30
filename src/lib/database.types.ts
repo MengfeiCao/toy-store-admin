@@ -70,6 +70,9 @@ export type Database = {
       get_sales_order: { Args: { p_order_id: string }; Returns: Json };
       list_sales_orders: { Args: { p_query: string; p_status: string | null; p_payment_status: string | null; p_date: string | null }; Returns: Array<{ id: string; order_no: string; customer_name: string | null; status: string; total_amount: number; payment_status: string; created_at: string }> };
       cancel_sales_order: { Args: { p_order_id: string }; Returns: undefined };
+      ship_sales_order: { Args: { p_order_id: string }; Returns: undefined };
+      mark_sales_order_paid: { Args: { p_order_id: string; p_payment_method: Database['public']['Enums']['payment_method'] }; Returns: undefined };
+      revert_sales_order_payment: { Args: { p_order_id: string }; Returns: undefined };
     };
     Enums: {
       app_role: 'owner' | 'staff';

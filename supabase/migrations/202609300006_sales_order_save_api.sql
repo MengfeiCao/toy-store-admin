@@ -80,6 +80,7 @@ as $$
     'status', o.status,
     'totalAmount', o.total_amount,
     'paymentStatus', o.payment_status,
+    'paymentMethod', o.payment_method,
     'remark', o.remark,
     'items', coalesce((select jsonb_agg(jsonb_build_object('productId', i.product_id, 'productName', i.product_name_snapshot, 'sku', i.sku_snapshot, 'quantity', i.quantity, 'unitPrice', i.unit_price) order by i.id) from public.sales_order_items i where i.sales_order_id = o.id), '[]'::jsonb)
   )

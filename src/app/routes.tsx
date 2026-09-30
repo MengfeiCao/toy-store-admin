@@ -8,6 +8,8 @@ import { StockLedgerPage } from '../features/stock/StockLedgerPage';
 import { CustomerListPage } from '../features/customers/CustomerListPage';
 import { SalesOrderListPage } from '../features/sales/SalesOrderListPage';
 import { SalesOrderEditPage } from '../features/sales/SalesOrderEditPage';
+import { SalesOrderDetailPage } from '../features/sales/SalesOrderDetailPage';
+import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
   return <section className="placeholder-page"><p className="eyebrow">乐奇玩具</p><h1>{title}</h1><p>此页面将在后续 task 中接入真实业务模块。</p></section>;
@@ -16,6 +18,12 @@ function PlaceholderPage({ title }: { title: string }) {
 function SalesOrderEditRoute() {
   const { id } = useParams();
   return <SalesOrderEditPage orderId={id} />;
+}
+
+function SalesOrderDetailRoute() {
+  const { id = '' } = useParams();
+  const { profile } = useAuth();
+  return <SalesOrderDetailPage orderId={id} role={profile?.role ?? 'staff'} />;
 }
 
 export function AppRoutes() {
@@ -32,6 +40,7 @@ export function AppRoutes() {
           <Route path="/sales" element={<SalesOrderListPage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
+          <Route path="/sales/:id/detail" element={<SalesOrderDetailRoute />} />
           <Route path="/users" element={<ProtectedRoute allow={['owner']}><PlaceholderPage title="用户管理" /></ProtectedRoute>} />
         </Route>
       </Route>
