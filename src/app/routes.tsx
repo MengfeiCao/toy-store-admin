@@ -5,6 +5,7 @@ import { AppShell } from './AppShell';
 import { ProductListPage } from '../features/products/ProductListPage';
 import { StockInPage } from '../features/stock/StockInPage';
 import { StockLedgerPage } from '../features/stock/StockLedgerPage';
+import { CustomerListPage } from '../features/customers/CustomerListPage';
 
 function PlaceholderPage({ title }: { title: string }) {
   return <section className="placeholder-page"><p className="eyebrow">乐奇玩具</p><h1>{title}</h1><p>此页面将在后续 task 中接入真实业务模块。</p></section>;
@@ -20,7 +21,7 @@ export function AppRoutes() {
           <Route path="/products" element={<ProductListPage />} />
           <Route path="/stock-in" element={<StockInPage />} />
           <Route path="/records" element={<StockLedgerPage />} />
-          <Route path="/customers" element={<PlaceholderPage title="客户管理" />} />
+          <Route path="/customers" element={<CustomerListPage />} />
           <Route path="/sales" element={<PlaceholderPage title="销售订单" />} />
           <Route path="/users" element={<ProtectedRoute allow={['owner']}><PlaceholderPage title="用户管理" /></ProtectedRoute>} />
         </Route>
