@@ -6,17 +6,18 @@ select has_function('public', 'current_user_role', ARRAY[]::text[], 'current_use
 select has_function('public', 'require_owner', ARRAY[]::text[], 'require_owner 函数存在');
 
 select is(
-  (select has_table_privilege('authenticated', 'public.products', 'SELECT (id, sku, barcode, name, category, brand, age_range, sale_price, stock_qty, low_stock_threshold, image_path, status, created_at, updated_at)')),
+  (select bool_and(has_column_privilege('authenticated', 'public.products', column_name, 'SELECT'))
+     from unnest(array['id', 'sku', 'barcode', 'name', 'category', 'brand', 'age_range', 'sale_price', 'stock_qty', 'low_stock_threshold', 'image_path', 'status', 'created_at', 'updated_at']) as column_name),
   true,
   '认证用户可以读取商品公开字段'
 );
 select is(
-  (select has_table_privilege('authenticated', 'public.products', 'SELECT (cost_price)')),
+  (select has_column_privilege('authenticated', 'public.products', 'cost_price', 'SELECT')),
   false,
   '认证用户不能直接读取商品成本字段'
 );
 select is(
-  (select has_table_privilege('authenticated', 'public.sales_order_items', 'SELECT (unit_cost_snapshot)')),
+  (select has_column_privilege('authenticated', 'public.sales_order_items', 'unit_cost_snapshot', 'SELECT')),
   false,
   '认证用户不能直接读取订单成本快照'
 );
