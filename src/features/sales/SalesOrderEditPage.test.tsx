@@ -1,0 +1,41 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { SalesOrderEditPage } from './SalesOrderEditPage';
+
+const mocks = vi.hoisted(() => ({ listProducts: vi.fn(), listCustomers: vi.fn(), saveSalesOrder: vi.fn(), getSalesOrder: vi.fn() }));
+vi.mock('../products/products.api', () => ({ listProducts: mocks.listProducts }));
+vi.mock('../customers/customers.api', () => ({ listCustomers: mocks.listCustomers }));
+vi.mock('./sales.api', () => ({ saveSalesOrder: mocks.saveSalesOrder, getSalesOrder: mocks.getSalesOrder }));
+
+describe('SalesOrderEditPage', () => {
+  it('shows_readonly_price_actions_and_calculates_total', async () => {
+    mocks.listProducts.mockResolvedValue([{ id: 'p1', name: '积木', sku: 'J-1', salePrice: 100, stockQty: 10, status: 'active' }, { id: 'p2', name: '小车', sku: 'C-1', salePrice: 100, stockQty: 10, status: 'active' }]);
+    mocks.listCustomers.mockResolvedValue([]);
+    mocks.saveSalesOrder.mockResolvedValue('o1');
+    render(<SalesOrderEditPage />);
+
+    expect(await screen.findByText('新建销售订单')).toBeInTheDocument();
+    expect(screen.getByText('保存草稿')).toBeInTheDocument();
+    expect(screen.getByText('确认订单')).toBeInTheDocument();
+    const productSelect = screen.getByLabelText('选择玩具');
+    fireEvent.change(productSelect, { target: { value: 'p1' } });
+    fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
+    fireEvent.change(productSelect, { target: { value: 'p2' } });
+    fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
+    expect(screen.getByText('合计 ¥200.00')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('售价')[0]).toHaveAttribute('readonly');
+  });
+
+  it('direct_confirmation_does_not_save_draft_first', async () => {
+    mocks.listProducts.mockResolvedValue([{ id: 'p1', name: '积木', sku: 'J-1', salePrice: 100, stockQty: 10, status: 'active' }]);
+    mocks.listCustomers.mockResolvedValue([]);
+    mocks.saveSalesOrder.mockResolvedValue('o1');
+    render(<SalesOrderEditPage />);
+    await screen.findByText('新建销售订单');
+    fireEvent.change(screen.getByLabelText('选择玩具'), { target: { value: 'p1' } });
+    fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
+    fireEvent.click(screen.getByRole('button', { name: '确认订单' }));
+    await waitFor(() => expect(mocks.saveSalesOrder).toHaveBeenCalledWith(expect.objectContaining({ confirm: true })));
+    expect(mocks.saveSalesOrder.mock.calls[0][0].confirm).toBe(true);
+  });
+});

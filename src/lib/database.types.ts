@@ -66,6 +66,10 @@ export type Database = {
       get_stock_in: { Args: { p_order_id: string }; Returns: Json };
       post_stock_in: { Args: { p_order_id: string }; Returns: undefined };
       list_stock_records: { Args: { p_product_id: string | null; p_source: string | null; p_date: string | null }; Returns: Array<{ id: string; product_id: string; product_name: string; sku: string; quantity_delta: number; source: string; source_order_no: string | null; created_at: string }> };
+      save_sales_order: { Args: { p_order_id: string | null; p_customer_id: string | null; p_remark: string | null; p_items: Json; p_confirm: boolean }; Returns: string };
+      get_sales_order: { Args: { p_order_id: string }; Returns: Json };
+      list_sales_orders: { Args: { p_query: string; p_status: string | null; p_payment_status: string | null; p_date: string | null }; Returns: Array<{ id: string; order_no: string; customer_name: string | null; status: string; total_amount: number; payment_status: string; created_at: string }> };
+      cancel_sales_order: { Args: { p_order_id: string }; Returns: undefined };
     };
     Enums: {
       app_role: 'owner' | 'staff';
