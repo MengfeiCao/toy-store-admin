@@ -591,6 +591,11 @@ isOneToOne: false
               "count_no": string,"created_at": string,"id": string,"status": Database["public"]['Enums']["stock_count_status"]
             }[]
                            },
+"list_stock_in_history":
+{ Args: { "p_date"?: string | null,"p_query"?: string,"p_status"?: Database["public"]['Enums']["stock_in_status"] | null }; Returns: {
+              "created_at": string,"id": string,"order_no": string,"posted_at": string | null,"status": Database["public"]['Enums']["stock_in_status"],"total_quantity": number
+            }[]
+                           },
 "list_stock_records":
 { Args: { "p_date"?: string | null,"p_product_id"?: string | null,"p_source"?: string | null }; Returns: {
               "created_at": string,"id": string,"product_id": string,"product_name": string,"quantity_delta": number,"sku": string,"source": string,"source_order_no": string | null

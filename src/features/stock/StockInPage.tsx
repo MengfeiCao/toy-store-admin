@@ -1,43 +1,26 @@
 import { useEffect, useState } from 'react';
-import { listProducts } from '../products/products.api';
-import type { ProductListItem } from '../products/product.types';
-import { getStockIn, postStockIn, saveStockInDraft } from './stock.api';
+import { Alert, Table, Tag } from 'antd';
+import { listStockInHistory } from './stock.api';
+import type { StockInHistoryItem } from './stock.types';
 
 export function StockInPage() {
-  const [products, setProducts] = useState<ProductListItem[]>([]);
-  const [productId, setProductId] = useState('');
-  const [quantity, setQuantity] = useState('1');
-  const [orderId, setOrderId] = useState<string>();
-  const [status, setStatus] = useState<'draft' | 'posted'>('draft');
-  const [message, setMessage] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [posting, setPosting] = useState(false);
+  const [rows, setRows] = useState<StockInHistoryItem[]>([]);
+  const [error, setError] = useState('');
 
-  useEffect(() => { void listProducts({ status: 'active' }).then((items) => { setProducts(items); setProductId(items[0]?.id ?? ''); }); }, []);
+  useEffect(() => {
+    void listStockInHistory().then(setRows).catch((reason) => setError(String(reason.message ?? reason)));
+  }, []);
 
-  async function saveDraft() {
-    const parsed = Number(quantity);
-    if (!Number.isInteger(parsed) || parsed <= 0 || !productId) { setMessage('请输入大于 0 的整数数量'); return; }
-    setSaving(true); setMessage(null);
-    try { const id = await saveStockInDraft({ orderId, items: [{ productId, quantity: parsed }] }); setOrderId(id); setMessage('草稿已保存'); } catch (cause) { setMessage(cause instanceof Error ? cause.message : '保存失败'); } finally { setSaving(false); }
-  }
-
-  async function confirmStockIn() {
-    const parsed = Number(quantity);
-    if (!Number.isInteger(parsed) || parsed <= 0 || !productId) { setMessage('请输入大于 0 的整数数量'); return; }
-    setPosting(true); setMessage(null);
-    try {
-      const id = orderId ?? await saveStockInDraft({ items: [{ productId, quantity: parsed }] });
-      setOrderId(id);
-      await postStockIn(id);
-      setStatus('posted'); setMessage('入库已确认');
-    } catch (cause) {
-      if (orderId) {
-        try { const detail = await getStockIn(orderId); setStatus(detail.status); if (detail.status === 'posted') { setMessage('入库已确认'); return; } } catch { /* 保留原始错误 */ }
-      }
-      setMessage(cause instanceof Error ? cause.message : '确认失败');
-    } finally { setPosting(false); }
-  }
-
-  return <section className="feature-page"><div className="screen-head"><div><p className="eyebrow">库存管理</p><h1>入库单</h1><p>保存草稿后可继续编辑；确认入库会增加库存并生成正向流水。</p></div><span className="status-pill">{status === 'posted' ? '已入库' : '草稿'}</span></div><div className="table-panel stock-form-panel"><div className="stock-form"><label>玩具<select aria-label="入库玩具" value={productId} onChange={(event) => setProductId(event.target.value)}>{products.map((product) => <option key={product.id} value={product.id}>{product.name} · 当前库存 {product.stockQty}</option>)}</select></label><label>入库数量<input aria-label="入库数量" type="number" min="1" step="1" value={quantity} onChange={(event) => setQuantity(event.target.value)} readOnly={status === 'posted'} /></label></div><div className="stock-summary">本次入库 {quantity || 0} 件，确认后库存会从数据库事务中增加。</div><div className="drawer-actions"><button className="btn-secondary" type="button" onClick={() => void saveDraft()} disabled={saving || posting || status === 'posted'}>{saving ? '保存中…' : '保存草稿'}</button><button className="btn-primary" type="button" onClick={() => void confirmStockIn()} disabled={saving || posting || status === 'posted'}>{posting ? '确认中…' : '确认入库'}</button></div>{message && <p className="form-hint" aria-live="polite">{message}</p>}</div></section>;
+  return (
+    <section className="feature-page">
+      <div className="screen-head"><div><p className="eyebrow">库存管理</p><h1>历史手工入库</h1><p>手工入库已停用。新库存请从采购单到货入库，历史记录保留只读查询。</p></div></div>
+      {error && <Alert message={error} />}
+      <Table rowKey="id" dataSource={rows} pagination={false} columns={[
+        { title: '入库单号', dataIndex: 'orderNo' },
+        { title: '状态', dataIndex: 'status', render: (status) => <Tag color={status === 'posted' ? 'green' : 'default'}>{status === 'posted' ? '已入库' : '历史草稿'}</Tag> },
+        { title: '总数量', dataIndex: 'totalQuantity' },
+        { title: '创建时间', dataIndex: 'createdAt' },
+      ]} />
+    </section>
+  );
 }

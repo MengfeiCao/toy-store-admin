@@ -1,14 +1,6 @@
 import { toAppError } from '../../lib/app-error';
-import type { Json } from '../../lib/database.types';
 import { supabase } from '../../lib/supabase';
-import type { StockInDetail, StockInDraftInput, StockRecord, StockRecordFilters } from './stock.types';
-
-export async function saveStockInDraft(input: StockInDraftInput): Promise<string> {
-  const items = input.items.map((item) => ({ productId: item.productId, quantity: item.quantity }));
-  const { data, error } = await supabase.rpc('save_stock_in_draft', { p_order_id: input.orderId ?? null, p_remark: input.remark ?? null, p_items: items as Json });
-  if (error) throw toAppError(error);
-  return String(data);
-}
+import type { StockInDetail, StockInHistoryItem, StockRecord, StockRecordFilters } from './stock.types';
 
 export async function getStockIn(id: string): Promise<StockInDetail> {
   const { data, error } = await supabase.rpc('get_stock_in', { p_order_id: id });
@@ -17,12 +9,17 @@ export async function getStockIn(id: string): Promise<StockInDetail> {
   return detail;
 }
 
-export async function postStockIn(orderId: string): Promise<void> {
-  const { error } = await supabase.rpc('post_stock_in', { p_order_id: orderId });
-  if (!error) return;
-  const detail = await getStockIn(orderId);
-  if (detail.status === 'posted') return;
-  throw toAppError(error);
+export async function listStockInHistory(): Promise<StockInHistoryItem[]> {
+  const { data, error } = await supabase.rpc('list_stock_in_history', { p_query: '', p_status: null, p_date: null });
+  if (error) throw toAppError(error);
+  return (data ?? []).map((item) => ({
+    id: item.id,
+    orderNo: item.order_no,
+    status: item.status,
+    totalQuantity: item.total_quantity,
+    createdAt: item.created_at,
+    postedAt: item.posted_at,
+  }));
 }
 
 export async function listStockRecords(filters: StockRecordFilters): Promise<StockRecord[]> {
