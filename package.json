@@ -15,9 +15,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
     "antd": "^5.27.1",
+    "echarts": "^6.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

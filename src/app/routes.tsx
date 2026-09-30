@@ -24,6 +24,7 @@ import { StockAdjustmentPage } from '../features/inventory/StockAdjustmentPage';
 import { AfterSalesListPage } from '../features/after-sales/AfterSalesListPage';
 import { AfterSalesCreatePage } from '../features/after-sales/AfterSalesCreatePage';
 import { AfterSalesDetailPage } from '../features/after-sales/AfterSalesDetailPage';
+import { ReportsPage } from '../features/reports/ReportsPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -73,6 +74,7 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/products" element={<ProductListPage />} />
           <Route path="/stock-in" element={<StockInPage />} />
           <Route path="/records" element={<StockLedgerPage />} />

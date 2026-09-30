@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 
 const navGroups = [
-  { label: '经营', items: [{ to: '/dashboard', label: '经营概览' }] },
+  { label: '经营', items: [{ to: '/dashboard', label: '经营概览' }, { to: '/reports', label: '经营报表' }] },
   { label: '商品与库存', items: [
     { to: '/products', label: '玩具管理' },
     { to: '/inventory', label: '当前库存' },
