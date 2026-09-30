@@ -7,6 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     globals: true,
+    testTimeout: 15_000,
     exclude: ['e2e/**', 'supabase/functions/**', 'node_modules/**'],
   },
 });

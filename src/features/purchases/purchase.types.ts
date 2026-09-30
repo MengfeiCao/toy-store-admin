@@ -51,3 +51,38 @@ export interface PurchaseOrderFilters {
   paymentStatus?: PurchasePaymentStatus | 'all';
   date?: string;
 }
+
+export interface PostPurchaseReceiptInput {
+  requestId: string;
+  purchaseOrderId: string;
+  remark?: string;
+  items: Array<{ purchaseOrderItemId: string; quantity: number }>;
+}
+
+export interface PurchaseReceiptListItem {
+  id: string;
+  receiptNo: string;
+  purchaseOrderId: string;
+  purchaseOrderNo: string;
+  supplierName: string;
+  receivedAt: string;
+  totalQuantity: number;
+}
+
+export interface PurchaseReceiptDetail {
+  id: string;
+  receiptNo: string;
+  purchaseOrderId: string;
+  purchaseOrderNo: string;
+  supplierName: string;
+  receivedAt: string;
+  remark?: string | null;
+  items: Array<{ id: string; purchaseOrderItemId: string; productId: string; productName: string; sku: string; quantity: number; unitCost: number }>;
+}
+
+export interface PurchaseReceiptFilters {
+  query?: string;
+  purchaseOrderId?: string;
+  supplierId?: string;
+  date?: string;
+}

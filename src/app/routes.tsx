@@ -15,6 +15,7 @@ import { SupplierListPage } from '../features/suppliers/SupplierListPage';
 import { PurchaseOrderListPage } from '../features/purchases/PurchaseOrderListPage';
 import { PurchaseOrderEditPage } from '../features/purchases/PurchaseOrderEditPage';
 import { PurchaseOrderDetailPage } from '../features/purchases/PurchaseOrderDetailPage';
+import { PurchaseReceiptListPage } from '../features/purchases/PurchaseReceiptListPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -58,6 +59,7 @@ export function AppRoutes() {
           <Route path="/purchases/new" element={<PurchaseOrderEditPage />} />
           <Route path="/purchases/:id" element={<PurchaseOrderEditRoute />} />
           <Route path="/purchases/:id/detail" element={<PurchaseOrderDetailRoute />} />
+          <Route path="/purchase-receipts" element={<PurchaseReceiptListPage />} />
           <Route path="/sales" element={<SalesOrderListPage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />

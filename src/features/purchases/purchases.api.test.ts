@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { cancelPurchaseOrder, confirmPurchaseOrder, getPurchaseOrder, listPurchaseOrders, savePurchaseOrderDraft } from './purchases.api';
+import { cancelPurchaseOrder, confirmPurchaseOrder, getPurchaseOrder, listPurchaseOrders, markPurchaseOrderPaid, postPurchaseReceipt, savePurchaseOrderDraft } from './purchases.api';
 
 const mocks = vi.hoisted(() => ({ rpc: vi.fn() }));
 vi.mock('../../lib/supabase', () => ({ supabase: mocks }));
@@ -36,5 +36,25 @@ describe('purchases api', () => {
 
     expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'confirm_purchase_order', { p_order_id: 'o1' });
     expect(mocks.rpc).toHaveBeenNthCalledWith(3, 'cancel_purchase_order', { p_order_id: 'o1' });
+  });
+
+  it('posts_receipt_and_recovers_a_timed_out_request_by_request_id', async () => {
+    mocks.rpc
+      .mockResolvedValueOnce({ data: null, error: { message: 'network timeout' } })
+      .mockResolvedValueOnce({ data: { id: 'r1', receiptNo: 'DH-001', items: [] }, error: null });
+
+    await expect(postPurchaseReceipt({ requestId: 'r1', purchaseOrderId: 'o1', remark: '', items: [{ purchaseOrderItemId: 'i1', quantity: 4 }] })).resolves.toBe('r1');
+
+    expect(mocks.rpc).toHaveBeenNthCalledWith(1, 'post_purchase_receipt', { p_request_id: 'r1', p_purchase_order_id: 'o1', p_remark: null, p_items: [{ purchaseOrderItemId: 'i1', quantity: 4 }] });
+    expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'get_purchase_receipt', { p_receipt_id: 'r1' });
+  });
+
+  it('marks_purchase_paid_and_recovers_by_payment_request_id', async () => {
+    mocks.rpc
+      .mockResolvedValueOnce({ data: null, error: { message: 'fetch failed' } })
+      .mockResolvedValueOnce({ data: { id: 'pay1', purchaseOrderId: 'o1' }, error: null });
+
+    await expect(markPurchaseOrderPaid('o1', 'pay1')).resolves.toBe('pay1');
+    expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'get_supplier_payment', { p_payment_id: 'pay1' });
   });
 });
