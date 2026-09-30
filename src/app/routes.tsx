@@ -10,6 +10,7 @@ import { SalesOrderListPage } from '../features/sales/SalesOrderListPage';
 import { SalesOrderEditPage } from '../features/sales/SalesOrderEditPage';
 import { SalesOrderDetailPage } from '../features/sales/SalesOrderDetailPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { UserManagementPage } from '../features/users/UserManagementPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -42,7 +43,7 @@ export function AppRoutes() {
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
           <Route path="/sales/:id/detail" element={<SalesOrderDetailRoute />} />
-          <Route path="/users" element={<ProtectedRoute allow={['owner']}><PlaceholderPage title="用户管理" /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute allow={['owner']}><UserManagementPage /></ProtectedRoute>} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
