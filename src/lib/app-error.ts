@@ -13,7 +13,14 @@ export class AppError extends Error {
 
 export function toAppError(error: unknown): AppError {
   if (error instanceof AppError) return error;
-  const message = error instanceof Error ? error.message : String(error ?? '未知错误');
+  const objectMessage = typeof error === 'object' && error !== null && 'message' in error
+    ? (error as { message?: unknown }).message
+    : undefined;
+  const message = error instanceof Error
+    ? error.message
+    : typeof objectMessage === 'string'
+      ? objectMessage
+      : String(error ?? '未知错误');
   const normalized = message.toLowerCase();
 
   if (normalized.includes('invalid login') || normalized.includes('jwt') || normalized.includes('auth')) {
