@@ -15,6 +15,8 @@ describe('toAppError', () => {
     ['INSUFFICIENT_STOCK', '库存不足，无法完成操作'],
     ['REQUEST_ID_CONFLICT', '请求标识已用于其他操作，请刷新后重试'],
     ['MANUAL_STOCK_IN_DISABLED', '手工入库已停用，请使用采购到货'],
+    ['DUPLICATE_PRODUCT', '同一采购单不能重复添加商品'],
+    ['PURCHASE_NOT_CANCELLABLE', '当前采购单已到货、已付款或状态不允许取消'],
   ])('maps_%s_to_a_clear_business_message', (code, expected) => {
     expect(toAppError({ message: code }).message).toBe(expected);
   });

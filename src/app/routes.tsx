@@ -12,6 +12,9 @@ import { SalesOrderDetailPage } from '../features/sales/SalesOrderDetailPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { UserManagementPage } from '../features/users/UserManagementPage';
 import { SupplierListPage } from '../features/suppliers/SupplierListPage';
+import { PurchaseOrderListPage } from '../features/purchases/PurchaseOrderListPage';
+import { PurchaseOrderEditPage } from '../features/purchases/PurchaseOrderEditPage';
+import { PurchaseOrderDetailPage } from '../features/purchases/PurchaseOrderDetailPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -29,6 +32,16 @@ function SalesOrderDetailRoute() {
   return <SalesOrderDetailPage orderId={id} role={profile?.role ?? 'staff'} />;
 }
 
+function PurchaseOrderEditRoute() {
+  const { id } = useParams();
+  return <PurchaseOrderEditPage orderId={id} />;
+}
+
+function PurchaseOrderDetailRoute() {
+  const { id = '' } = useParams();
+  return <PurchaseOrderDetailPage orderId={id} />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -41,6 +54,10 @@ export function AppRoutes() {
           <Route path="/records" element={<StockLedgerPage />} />
           <Route path="/customers" element={<CustomerListPage />} />
           <Route path="/suppliers" element={<SupplierListPage />} />
+          <Route path="/purchases" element={<PurchaseOrderListPage />} />
+          <Route path="/purchases/new" element={<PurchaseOrderEditPage />} />
+          <Route path="/purchases/:id" element={<PurchaseOrderEditRoute />} />
+          <Route path="/purchases/:id/detail" element={<PurchaseOrderDetailRoute />} />
           <Route path="/sales" element={<SalesOrderListPage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />

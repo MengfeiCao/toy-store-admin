@@ -49,6 +49,68 @@ export type Database = {
                   Relationships: [
 
                   ]
+                },"purchase_order_items": {
+                  Row: {
+                    "id": string,"product_id": string,"product_name_snapshot": string,"purchase_order_id": string,"quantity": number,"received_quantity": number,"sku_snapshot": string,"unit_cost": number
+                  }
+                  Insert: {
+                    "id"?: string,"product_id": string,"product_name_snapshot": string,"purchase_order_id": string,"quantity": number,"received_quantity"?: number,"sku_snapshot": string,"unit_cost": number
+                  }
+                  Update: {
+                    "id"?: string,"product_id"?: string,"product_name_snapshot"?: string,"purchase_order_id"?: string,"quantity"?: number,"received_quantity"?: number,"sku_snapshot"?: string,"unit_cost"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "purchase_order_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_order_items_purchase_order_id_fkey"
+      columns: ["purchase_order_id"]
+isOneToOne: false
+      referencedRelation: "purchase_orders"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"purchase_orders": {
+                  Row: {
+                    "cancelled_at": string | null,"cancelled_by": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"created_at": string,"created_by": string,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"remark": string | null,"status": Database["public"]['Enums']["purchase_order_status"],"supplier_id": string,"supplier_name_snapshot": string,"total_amount": number,"updated_at": string
+                  }
+                  Insert: {
+                    "cancelled_at"?: string | null,"cancelled_by"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by": string,"id"?: string,"order_no": string,"payment_status"?: Database["public"]['Enums']["payment_status"],"remark"?: string | null,"status"?: Database["public"]['Enums']["purchase_order_status"],"supplier_id": string,"supplier_name_snapshot": string,"total_amount"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "cancelled_at"?: string | null,"cancelled_by"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"order_no"?: string,"payment_status"?: Database["public"]['Enums']["payment_status"],"remark"?: string | null,"status"?: Database["public"]['Enums']["purchase_order_status"],"supplier_id"?: string,"supplier_name_snapshot"?: string,"total_amount"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "purchase_orders_cancelled_by_fkey"
+      columns: ["cancelled_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_orders_confirmed_by_fkey"
+      columns: ["confirmed_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_orders_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_orders_supplier_id_fkey"
+      columns: ["supplier_id"]
+isOneToOne: false
+      referencedRelation: "suppliers"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"sales_order_items": {
                   Row: {
                     "id": string,"product_id": string,"product_name_snapshot": string,"quantity": number,"sales_order_id": string,"sku_snapshot": string,"unit_cost_snapshot": number | null,"unit_price": number
@@ -248,7 +310,13 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "cancel_sales_order":
+            "cancel_purchase_order":
+{ Args: { "p_order_id": string }; Returns: undefined
+                           },
+"cancel_sales_order":
+{ Args: { "p_order_id": string }; Returns: undefined
+                           },
+"confirm_purchase_order":
 { Args: { "p_order_id": string }; Returns: undefined
                            },
 "create_product":
@@ -259,6 +327,9 @@ isOneToOne: false
                            },
 "get_dashboard":
 { Args: { "p_from": string,"p_to": string }; Returns: Json
+                           },
+"get_purchase_order":
+{ Args: { "p_order_id": string }; Returns: Json
                            },
 "get_sales_order":
 { Args: { "p_order_id": string }; Returns: Json
@@ -277,6 +348,11 @@ isOneToOne: false
 "list_products":
 { Args: { "p_query"?: string,"p_status"?: Database["public"]['Enums']["product_status"] | null }; Returns: {
               "age_range": string | null,"barcode": string | null,"brand": string | null,"category": string,"cost_price": number | null,"id": string,"image_path": string | null,"low_stock_threshold": number | null,"name": string,"sale_price": number,"sku": string,"status": Database["public"]['Enums']["product_status"],"stock_qty": number
+            }[]
+                           },
+"list_purchase_orders":
+{ Args: { "p_date"?: string | null,"p_payment_status"?: Database["public"]['Enums']["payment_status"] | null,"p_query"?: string,"p_status"?: Database["public"]['Enums']["purchase_order_status"] | null,"p_supplier_id"?: string | null }; Returns: {
+              "created_at": string,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"status": Database["public"]['Enums']["purchase_order_status"],"supplier_name": string,"total_amount": number
             }[]
                            },
 "list_sales_orders":
@@ -301,6 +377,9 @@ isOneToOne: false
 "revert_sales_order_payment":
 { Args: { "p_order_id": string }; Returns: undefined
                            },
+"save_purchase_order_draft":
+{ Args: { "p_items": Json,"p_order_id": string | null,"p_remark": string | null,"p_supplier_id": string }; Returns: string
+                           },
 "save_sales_order":
 { Args: { "p_confirm"?: boolean,"p_customer_id"?: string | null,"p_items"?: Json,"p_order_id"?: string | null,"p_remark"?: string | null }; Returns: string
                            },
@@ -321,7 +400,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
+            "app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","purchase_order_status": "draft"|"confirmed"|"partially_received"|"completed"|"cancelled","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -441,7 +520,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
+            "app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"purchase_order_status": ["draft", "confirmed", "partially_received", "completed", "cancelled"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
           }
         }
 } as const

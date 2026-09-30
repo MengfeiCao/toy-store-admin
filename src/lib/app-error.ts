@@ -23,6 +23,8 @@ const businessMessages: Record<string, string> = {
   PURCHASE_ALREADY_PAID: '采购单已经付款',
   DUPLICATE_BARCODE: '商品条码已存在',
   DUPLICATE_DOCUMENT_NO: '业务单号已存在，请重试',
+  DUPLICATE_PRODUCT: '同一采购单不能重复添加商品',
+  PURCHASE_NOT_CANCELLABLE: '当前采购单已到货、已付款或状态不允许取消',
 };
 
 export function toAppError(error: unknown): AppError {
