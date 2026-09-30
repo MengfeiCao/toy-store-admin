@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { listProducts } from './products.api';
+import { getProductImageUrl, listProducts } from './products.api';
 
-const mocks = vi.hoisted(() => ({ rpc: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  rpc: vi.fn(),
+  getPublicUrl: vi.fn(),
+}));
 vi.mock('../../lib/supabase', () => ({ supabase: mocks }));
 
 describe('products api', () => {
@@ -12,5 +15,13 @@ describe('products api', () => {
 
     expect(result[0].costPrice).toBeNull();
     expect(mocks.rpc).toHaveBeenCalledWith('list_products', { p_query: '', p_status: null });
+  });
+
+  it('returns_the_public_product_image_url', () => {
+    mocks.getPublicUrl.mockReturnValue({ data: { publicUrl: 'http://local.test/storage/dino.png' } });
+    Object.assign(mocks, { storage: { from: () => ({ getPublicUrl: mocks.getPublicUrl }) } });
+
+    expect(getProductImageUrl('dino.png')).toBe('http://local.test/storage/dino.png');
+    expect(mocks.getPublicUrl).toHaveBeenCalledWith('dino.png');
   });
 });

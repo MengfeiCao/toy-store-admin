@@ -92,3 +92,7 @@ export async function uploadProductImage(file: File): Promise<string> {
   if (error) throw toAppError(error);
   return path;
 }
+
+export function getProductImageUrl(path: string): string {
+  return supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+}

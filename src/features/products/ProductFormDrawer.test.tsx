@@ -4,6 +4,7 @@ import { ProductFormDrawer } from './ProductFormDrawer';
 
 const mocks = vi.hoisted(() => ({
   uploadProductImage: vi.fn(),
+  getProductImageUrl: vi.fn((path: string) => `http://local.test/${path}`),
   createProduct: vi.fn(),
   updateProductPublic: vi.fn(),
   updateProductPricing: vi.fn(),
@@ -23,5 +24,19 @@ describe('ProductFormDrawer', () => {
     expect(await screen.findByText('重试上传')).toBeInTheDocument();
     expect(screen.getByLabelText('名称')).toHaveValue('新恐龙积木');
     await waitFor(() => expect(mocks.uploadProductImage).toHaveBeenCalledWith(file));
+  });
+
+  it('shows_barcode_threshold_and_uploaded_image_preview', async () => {
+    mocks.uploadProductImage.mockResolvedValue('products/dino.png');
+    render(<ProductFormDrawer open role="owner" onClose={vi.fn()} onSaved={vi.fn()} />);
+
+    expect(screen.getByLabelText('条码')).toBeInTheDocument();
+    expect(screen.getByLabelText('低库存提醒值')).toBeInTheDocument();
+
+    const file = new File(['image'], 'dino.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('商品图片'), { target: { files: [file] } });
+
+    const preview = await screen.findByRole('img', { name: '商品图片预览' });
+    expect(preview).toHaveAttribute('src', 'http://local.test/products/dino.png');
   });
 });

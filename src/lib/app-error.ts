@@ -11,6 +11,20 @@ export class AppError extends Error {
   }
 }
 
+const businessMessages: Record<string, string> = {
+  SUPPLIER_INACTIVE: '供应商已停用，不能继续采购',
+  OVER_RECEIPT: '到货数量超过采购单剩余数量',
+  STOCK_COUNT_STALE: '盘点期间库存已发生变化，请刷新后重试',
+  INSUFFICIENT_STOCK: '库存不足，无法完成操作',
+  REQUEST_ID_CONFLICT: '请求标识已用于其他操作，请刷新后重试',
+  MANUAL_STOCK_IN_DISABLED: '手工入库已停用，请使用采购到货',
+  PURCHASE_NOT_EDITABLE: '当前采购单状态不允许编辑',
+  PURCHASE_NOT_RECEIVABLE: '当前采购单状态不允许到货',
+  PURCHASE_ALREADY_PAID: '采购单已经付款',
+  DUPLICATE_BARCODE: '商品条码已存在',
+  DUPLICATE_DOCUMENT_NO: '业务单号已存在，请重试',
+};
+
 export function toAppError(error: unknown): AppError {
   if (error instanceof AppError) return error;
   const objectMessage = typeof error === 'object' && error !== null && 'message' in error
@@ -22,6 +36,9 @@ export function toAppError(error: unknown): AppError {
       ? objectMessage
       : String(error ?? '未知错误');
   const normalized = message.toLowerCase();
+  const businessCode = Object.keys(businessMessages).find((code) => message.toUpperCase().includes(code));
+
+  if (businessCode) return new AppError(businessMessages[businessCode], 'unknown', { cause: error });
 
   if (normalized.includes('invalid login') || normalized.includes('jwt') || normalized.includes('auth')) {
     return new AppError('登录状态已失效，请重新登录', 'auth', { cause: error });
