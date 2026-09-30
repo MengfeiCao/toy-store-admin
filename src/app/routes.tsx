@@ -25,6 +25,8 @@ import { AfterSalesListPage } from '../features/after-sales/AfterSalesListPage';
 import { AfterSalesCreatePage } from '../features/after-sales/AfterSalesCreatePage';
 import { AfterSalesDetailPage } from '../features/after-sales/AfterSalesDetailPage';
 import { ReportsPage } from '../features/reports/ReportsPage';
+import { QuickSalePage } from '../features/sales/QuickSalePage';
+import { ReceiptPage } from '../features/sales/ReceiptPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -40,6 +42,11 @@ function SalesOrderDetailRoute() {
   const { id = '' } = useParams();
   const { profile } = useAuth();
   return <SalesOrderDetailPage orderId={id} role={profile?.role ?? 'staff'} />;
+}
+
+function ReceiptRoute() {
+  const { id = '' } = useParams();
+  return <ReceiptPage orderId={id} />;
 }
 
 function PurchaseOrderEditRoute() {
@@ -91,9 +98,11 @@ export function AppRoutes() {
           <Route path="/stock-counts/:id" element={<StockCountDetailRoute />} />
           <Route path="/stock-adjustments" element={<StockAdjustmentPage />} />
           <Route path="/sales" element={<SalesOrderListPage />} />
+          <Route path="/quick-sale" element={<QuickSalePage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
           <Route path="/sales/:id/detail" element={<SalesOrderDetailRoute />} />
+          <Route path="/sales/:id/receipt" element={<ReceiptRoute />} />
           <Route path="/sales/:id/after-sales" element={<AfterSalesCreateRoute />} />
           <Route path="/after-sales" element={<AfterSalesListPage />} />
           <Route path="/after-sales/:id" element={<AfterSalesDetailRoute />} />

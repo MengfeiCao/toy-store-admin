@@ -18,6 +18,7 @@ const navGroups = [
     { to: '/purchase-receipts', label: '采购到货' },
   ] },
   { label: '销售', items: [
+    { to: '/quick-sale', label: '扫码开单' },
     { to: '/customers', label: '客户管理' },
     { to: '/sales', label: '销售订单' },
     { to: '/after-sales', label: '售后管理' },

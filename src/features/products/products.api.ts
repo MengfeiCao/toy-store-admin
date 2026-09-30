@@ -1,6 +1,6 @@
 import { toAppError } from '../../lib/app-error';
 import { supabase } from '../../lib/supabase';
-import type { CreateProductInput, ProductFilters, ProductListItem, ProductStatus, PublicProductInput } from './product.types';
+import type { BarcodeProduct, CreateProductInput, ProductFilters, ProductListItem, ProductStatus, PublicProductInput } from './product.types';
 
 type ProductRow = {
   id: string;
@@ -43,6 +43,13 @@ export async function listProducts(filters: ProductFilters): Promise<ProductList
   });
   if (error) throw toAppError(error);
   return ((data ?? []) as ProductRow[]).map(mapProduct);
+}
+
+export async function getProductByBarcode(barcode: string): Promise<BarcodeProduct | null> {
+  const { data, error } = await supabase.rpc('get_product_by_barcode', { p_barcode: barcode.trim() });
+  if (error) throw toAppError(error);
+  const row = data?.[0];
+  return row ? { id: row.id, sku: row.sku, barcode: row.barcode, name: row.name, salePrice: Number(row.sale_price), stockQty: row.stock_qty } : null;
 }
 
 export async function createProduct(input: CreateProductInput): Promise<string> {

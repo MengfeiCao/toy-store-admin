@@ -23,6 +23,15 @@ export interface ProductListItem {
   status: ProductStatus;
 }
 
+export interface BarcodeProduct {
+  id: string;
+  sku: string;
+  barcode: string;
+  name: string;
+  salePrice: number;
+  stockQty: number;
+}
+
 export interface CreateProductInput {
   sku: string;
   barcode?: string;

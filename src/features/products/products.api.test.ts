@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getProductImageUrl, listProducts } from './products.api';
+import { getProductByBarcode, getProductImageUrl, listProducts } from './products.api';
 
 const mocks = vi.hoisted(() => ({
   rpc: vi.fn(),
@@ -23,5 +23,11 @@ describe('products api', () => {
 
     expect(getProductImageUrl('dino.png')).toBe('http://local.test/storage/dino.png');
     expect(mocks.getPublicUrl).toHaveBeenCalledWith('dino.png');
+  });
+
+  it('maps_an_exact_barcode_lookup_without_cost_data', async () => {
+    mocks.rpc.mockResolvedValue({ data: [{ id: 'p1', sku: 'J-1', barcode: '690001', name: '积木', sale_price: 39.9, stock_qty: 4 }], error: null });
+    await expect(getProductByBarcode(' 690001 ')).resolves.toEqual({ id: 'p1', sku: 'J-1', barcode: '690001', name: '积木', salePrice: 39.9, stockQty: 4 });
+    expect(mocks.rpc).toHaveBeenCalledWith('get_product_by_barcode', { p_barcode: '690001' });
   });
 });

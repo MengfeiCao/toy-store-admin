@@ -17,6 +17,7 @@ test.describe('核心业务闭环', () => {
     const runId = Date.now().toString(36).toUpperCase();
     const productName = `验收玩具-${runId}`;
     const sku = `E2E-${runId}`;
+    const barcode = `69${Date.now()}`;
     const supplierName = `验收供应商-${runId}`;
     const metric = async (label: string) => Number((await page.locator('.metric-card').filter({ hasText: label }).locator('strong').innerText()).replace(/[¥,]/g, ''));
     const salesBefore = await metric('销售额');
@@ -28,6 +29,7 @@ test.describe('核心业务闭环', () => {
     await page.getByRole('button', { name: '新增玩具' }).click();
     await page.getByLabel('名称').fill(productName);
     await page.getByLabel('货号').fill(sku);
+    await page.getByLabel('条码').fill(barcode);
     await page.getByLabel('分类').fill('自动验收');
     await page.getByLabel('成本价').fill('60');
     await page.getByLabel('售价').fill('100');
@@ -53,10 +55,15 @@ test.describe('核心业务闭环', () => {
     await page.getByRole('button', { name: '确认到货' }).click();
     await expect(page.getByText('已完成')).toBeVisible();
 
-    await page.goto('/sales/new');
-    await page.getByLabel('选择玩具').selectOption({ label: `${productName} · 100.00 元` });
-    await page.getByRole('button', { name: '添加玩具' }).click();
-    await page.getByLabel(`数量-${productName}`).fill('3');
+    await page.goto('/quick-sale');
+    const scanner = page.getByLabel('扫描商品条码');
+    await scanner.fill(barcode);
+    await scanner.press('Enter');
+    await scanner.fill(barcode);
+    await scanner.press('Enter');
+    await scanner.fill(barcode);
+    await scanner.press('Enter');
+    await expect(page.locator('tbody tr').filter({ hasText: sku }).first()).toContainText('3');
     await page.getByRole('button', { name: '确认订单' }).click();
     await expect(page).toHaveURL(/\/sales\/.+\/detail/);
     const orderDetailUrl = page.url();
@@ -67,6 +74,12 @@ test.describe('核心业务闭环', () => {
     await expect(page.getByText('已完成')).toBeVisible();
     await page.getByRole('button', { name: '标记已收款' }).click();
     await expect(page.getByText('已收款')).toBeVisible();
+
+    await page.getByRole('link', { name: '打印小票' }).click();
+    await expect(page).toHaveURL(/\/sales\/.+\/receipt/);
+    await expect(page.getByRole('heading', { name: '乐奇玩具' })).toBeVisible();
+    await expect(page.getByText(productName)).toBeVisible();
+    await expect(page.getByText('¥300.00').first()).toBeVisible();
 
     await page.goto('/products');
     await page.getByLabel('搜索玩具').fill(sku);
