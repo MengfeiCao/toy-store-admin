@@ -93,6 +93,13 @@ textarea {
 .status-pill { display: inline-block; padding: 4px 8px; border-radius: 99px; background: #e9f8f0; color: #178a55; font-size: 11px; }
 .status-pill.muted { background: #eef2f7; color: #667085; }
 .text-button, .drawer-close { border: 0; padding: 0; margin-right: 10px; color: #2768e8; background: none; font-size: 12px; }
+.stock-form-panel { padding: 22px; }
+.stock-form { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 14px; }
+.stock-form label { display: grid; gap: 7px; color: #667085; font-size: 12px; }
+.stock-form select, .stock-form input { padding: 10px 11px; border: 1px solid #dfe4ec; border-radius: 8px; background: #fff; color: #172033; }
+.stock-summary { margin-top: 16px; padding: 12px; border-radius: 8px; background: #eaf1ff; color: #2768e8; font-size: 12px; }
+.positive-number { color: #178a55; font-weight: 700; }
+.negative-number { color: #d84646; font-weight: 700; }
 .drawer-backdrop { position: fixed; inset: 0; z-index: 10; display: flex; justify-content: flex-end; background: rgba(23,32,51,.25); }
 .product-drawer { width: min(100%, 460px); overflow-y: auto; padding: 24px; background: #fff; box-shadow: -10px 0 30px rgba(23,32,51,.12); }
 .drawer-header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 22px; }
@@ -108,4 +115,5 @@ textarea {
   .sidebar nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .account-summary { margin-top: 18px; }
   .app-content { padding: 16px; }
+  .stock-form { grid-template-columns: 1fr; }
 }

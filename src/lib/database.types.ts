@@ -62,6 +62,10 @@ export type Database = {
       update_product_public: { Args: { p_id: string; p_barcode: string | null; p_name: string; p_category: string; p_brand: string | null; p_age_range: string | null; p_low_stock_threshold: number | null; p_image_path: string | null }; Returns: undefined };
       update_product_pricing: { Args: { p_id: string; p_cost_price: number; p_sale_price: number }; Returns: undefined };
       set_product_status: { Args: { p_id: string; p_status: Database['public']['Enums']['product_status'] }; Returns: undefined };
+      save_stock_in_draft: { Args: { p_order_id: string | null; p_remark: string | null; p_items: Json }; Returns: string };
+      get_stock_in: { Args: { p_order_id: string }; Returns: Json };
+      post_stock_in: { Args: { p_order_id: string }; Returns: undefined };
+      list_stock_records: { Args: { p_product_id: string | null; p_source: string | null; p_date: string | null }; Returns: Array<{ id: string; product_id: string; product_name: string; sku: string; quantity_delta: number; source: string; source_order_no: string | null; created_at: string }> };
     };
     Enums: {
       app_role: 'owner' | 'staff';
