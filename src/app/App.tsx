@@ -1,9 +1,14 @@
 import type { ReactElement } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../auth/AuthProvider';
+import { AppRoutes } from './routes';
 
 export function App(): ReactElement {
   return (
-    <main className="app-root">
-      <h1>玩具销售后台</h1>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
