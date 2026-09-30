@@ -7,8 +7,19 @@
 3. 启动本地 Supabase：`supabase start`。首次建库运行 `supabase db reset`；已有本地数据时运行 `supabase migration up --local`，避免清空数据。
 4. 启动用户管理函数：`supabase functions serve admin-users --no-verify-jwt`。函数从本地 Supabase 配置读取服务端密钥，服务端密钥不要写入前端环境变量。
 5. 启动前端：`npm run dev`。
-6. 准备并运行完整验收：`npm run setup:e2e && npm run test:e2e:local`。macOS 直接使用已安装的 Google Chrome；其他系统先运行 `npx playwright install chromium`。
+6. 准备并运行完整验收：先执行 `npm run setup:e2e`，再执行 `npm run test:e2e:local`。macOS 直接使用已安装的 Google Chrome；其他系统先运行 `npx playwright install chromium`。
 7. 运行其余检查：`npm test -- --run && supabase test db && npm run build`。
+
+## 采购与库存操作
+
+1. 先维护供应商和商品，再创建采购单；确认后的采购单不再编辑商品和价格。
+2. 在采购单详情登记一次或多次到货。每次到货会原子更新采购进度、商品库存、成本价和库存流水。
+3. 采购单可独立标记付款；重复请求不会重复生成到货或付款记录。
+4. 盘点创建时会保存账面库存快照。确认前若库存已变化，系统会拒绝过期盘点，应重新创建盘点单。
+5. 盘盈、短缺、破损和手工调整必须填写原因，且会生成不可修改的库存流水。
+6. 历史手工入库仍可在“历史手工入库”查看，但数据库已拒绝新增或确认；新增库存请使用采购到货。
+
+商品图片存放在 Supabase Storage 的 `product-images` bucket。浏览器只使用公开 anon key，服务端密钥不得写入 `.env.local` 或前端构建产物。
 
 ## 首个店主账号
 

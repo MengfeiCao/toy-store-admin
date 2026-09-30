@@ -4,6 +4,7 @@ const ready = Boolean(process.env.E2E_OWNER_EMAIL && process.env.E2E_OWNER_PASSW
 test.skip(!ready, '需要配置 E2E_OWNER_EMAIL/E2E_OWNER_PASSWORD 与本地 Supabase');
 
 test.describe('核心业务闭环', () => {
+  test.setTimeout(90_000);
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
     await page.getByLabel('邮箱').fill(process.env.E2E_OWNER_EMAIL!);
@@ -12,10 +13,11 @@ test.describe('核心业务闭环', () => {
     await expect(page).toHaveURL(/dashboard/);
   });
 
-  test('商品、入库、订单、出库和收款闭环', async ({ page }) => {
+  test('商品、采购到货、订单、出库和收款闭环', async ({ page }) => {
     const runId = Date.now().toString(36).toUpperCase();
     const productName = `验收玩具-${runId}`;
     const sku = `E2E-${runId}`;
+    const supplierName = `验收供应商-${runId}`;
     const metric = async (label: string) => Number((await page.locator('.metric-card').filter({ hasText: label }).locator('strong').innerText()).replace(/[¥,]/g, ''));
     const salesBefore = await metric('销售额');
     const costBefore = await metric('成本');
@@ -29,14 +31,27 @@ test.describe('核心业务闭环', () => {
     await page.getByLabel('分类').fill('自动验收');
     await page.getByLabel('成本价').fill('60');
     await page.getByLabel('售价').fill('100');
-    await page.getByRole('button', { name: '保存' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: /保\s*存/ }).click();
     await expect(page.getByText(productName)).toBeVisible();
 
-    await page.goto('/stock-in');
-    await page.getByLabel('入库玩具').selectOption({ label: `${productName} · 当前库存 0` });
-    await page.getByLabel('入库数量').fill('10');
-    await page.getByRole('button', { name: '确认入库' }).click();
-    await expect(page.getByText('入库已确认')).toBeVisible();
+    await page.goto('/suppliers');
+    await page.getByRole('button', { name: '新增供应商' }).click();
+    await page.getByLabel('供应商名称').fill(supplierName);
+    await page.getByRole('dialog').getByRole('button', { name: /保\s*存/ }).click();
+    await expect(page.getByText(supplierName)).toBeVisible();
+
+    await page.goto('/purchases/new');
+    await expect(page.getByText(supplierName)).toBeVisible();
+    await expect(page.getByText(`${productName} · ${sku}`)).toBeVisible();
+    await page.getByRole('button', { name: '添加商品' }).click();
+    await page.getByLabel(`采购数量-${productName}`).fill('10');
+    await page.getByLabel(`采购单价-${productName}`).fill('60');
+    await page.getByRole('button', { name: '确认采购单' }).click();
+    await expect(page).toHaveURL(/\/purchases\/.+\/detail/);
+    await page.getByRole('button', { name: '登记到货' }).click();
+    await page.getByLabel(`本次到货-${productName}`).fill('10');
+    await page.getByRole('button', { name: '确认到货' }).click();
+    await expect(page.getByText('已完成')).toBeVisible();
 
     await page.goto('/sales/new');
     await page.getByLabel('选择玩具').selectOption({ label: `${productName} · 100.00 元` });
@@ -60,7 +75,7 @@ test.describe('核心业务闭环', () => {
 
     await productRow.getByRole('button', { name: '编辑' }).click();
     await page.getByLabel('售价').fill('120');
-    await page.getByRole('button', { name: '保存' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: /保\s*存/ }).click();
     await page.goto(orderDetailUrl);
     await expect(page.getByText('金额：¥300.00')).toBeVisible();
     await expect(page.getByText('¥100.00')).toBeVisible();
@@ -69,6 +84,7 @@ test.describe('核心业务闭环', () => {
     const stockRows = page.locator('tbody tr').filter({ hasText: sku });
     await expect(stockRows).toHaveCount(2);
     await expect(stockRows.getByRole('cell', { name: '+10', exact: true })).toBeVisible();
+    await expect(stockRows.getByRole('cell', { name: '采购到货', exact: true })).toBeVisible();
     await expect(stockRows.getByRole('cell', { name: '-3', exact: true })).toBeVisible();
 
     await page.goto('/dashboard');

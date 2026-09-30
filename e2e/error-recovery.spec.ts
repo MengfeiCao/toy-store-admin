@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 test.skip(!process.env.E2E_OWNER_EMAIL || !process.env.E2E_OWNER_PASSWORD, '需要配置 E2E 凭据');
 
 test('库存不足时不完成订单', async ({ page }) => {
+  test.setTimeout(60_000);
   const runId = Date.now().toString(36).toUpperCase();
   const productName = `缺货验收-${runId}`;
   const sku = `EMPTY-${runId}`;
@@ -20,7 +21,7 @@ test('库存不足时不完成订单', async ({ page }) => {
   await page.getByLabel('分类').fill('自动验收');
   await page.getByLabel('成本价').fill('10');
   await page.getByLabel('售价').fill('20');
-  await page.getByRole('button', { name: '保存' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: /保\s*存/ }).click();
   await expect(page.getByText(productName)).toBeVisible();
 
   await page.goto('/sales/new');

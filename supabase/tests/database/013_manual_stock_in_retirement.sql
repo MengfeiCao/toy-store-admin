@@ -1,5 +1,5 @@
 begin;
-select plan(8);
+select plan(9);
 
 select ok(to_regprocedure('public.list_stock_in_history(text,public.stock_in_status,date)') is not null, '历史手工入库列表函数存在');
 
@@ -26,6 +26,7 @@ select is((public.get_stock_in('43000000-0000-0000-0000-000000000001')->>'orderN
 select ok(position('purchase_receipt' in pg_get_functiondef('public.list_stock_records(uuid,text,date)'::regprocedure)) > 0, '流水包含采购到货来源');
 select ok(position('stock_count' in pg_get_functiondef('public.list_stock_records(uuid,text,date)'::regprocedure)) > 0, '流水包含盘点来源');
 select ok(position('damage' in pg_get_functiondef('public.list_stock_records(uuid,text,date)'::regprocedure)) > 0, '流水包含调整来源');
+select ok(position('Asia/Shanghai' in pg_get_functiondef('public.get_dashboard(date,date)'::regprocedure)) > 0, '经营数据按门店时区归档');
 
 select * from finish();
 rollback;
