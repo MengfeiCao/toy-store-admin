@@ -241,6 +241,106 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"stock_adjustment_items": {
+                  Row: {
+                    "after_quantity": number,"before_quantity": number,"id": string,"product_id": string,"product_name_snapshot": string,"quantity_delta": number,"sku_snapshot": string,"stock_adjustment_id": string
+                  }
+                  Insert: {
+                    "after_quantity": number,"before_quantity": number,"id"?: string,"product_id": string,"product_name_snapshot": string,"quantity_delta": number,"sku_snapshot": string,"stock_adjustment_id": string
+                  }
+                  Update: {
+                    "after_quantity"?: number,"before_quantity"?: number,"id"?: string,"product_id"?: string,"product_name_snapshot"?: string,"quantity_delta"?: number,"sku_snapshot"?: string,"stock_adjustment_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_adjustment_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_adjustment_items_stock_adjustment_id_fkey"
+      columns: ["stock_adjustment_id"]
+isOneToOne: false
+      referencedRelation: "stock_adjustments"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_adjustments": {
+                  Row: {
+                    "adjustment_no": string,"created_at": string,"created_by": string,"id": string,"reason": string,"request_payload": NonNullable<Json>,"stock_count_id": string | null,"type": Database["public"]['Enums']["stock_adjustment_type"]
+                  }
+                  Insert: {
+                    "adjustment_no": string,"created_at"?: string,"created_by": string,"id": string,"reason": string,"request_payload": NonNullable<Json>,"stock_count_id"?: string | null,"type": Database["public"]['Enums']["stock_adjustment_type"]
+                  }
+                  Update: {
+                    "adjustment_no"?: string,"created_at"?: string,"created_by"?: string,"id"?: string,"reason"?: string,"request_payload"?: NonNullable<Json>,"stock_count_id"?: string | null,"type"?: Database["public"]['Enums']["stock_adjustment_type"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_adjustments_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_adjustments_stock_count_id_fkey"
+      columns: ["stock_count_id"]
+isOneToOne: true
+      referencedRelation: "stock_counts"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_count_items": {
+                  Row: {
+                    "actual_quantity": number | null,"book_quantity": number,"difference_quantity": number | null,"id": string,"product_id": string,"product_name_snapshot": string,"sku_snapshot": string,"stock_count_id": string
+                  }
+                  Insert: {
+                    "actual_quantity"?: number | null,"book_quantity": number,"difference_quantity"?: number | null,"id"?: string,"product_id": string,"product_name_snapshot": string,"sku_snapshot": string,"stock_count_id": string
+                  }
+                  Update: {
+                    "actual_quantity"?: number | null,"book_quantity"?: number,"difference_quantity"?: number | null,"id"?: string,"product_id"?: string,"product_name_snapshot"?: string,"sku_snapshot"?: string,"stock_count_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_count_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_count_items_stock_count_id_fkey"
+      columns: ["stock_count_id"]
+isOneToOne: false
+      referencedRelation: "stock_counts"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_counts": {
+                  Row: {
+                    "confirmation_request_id": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"count_no": string,"created_at": string,"created_by": string,"id": string,"remark": string | null,"status": Database["public"]['Enums']["stock_count_status"],"updated_at": string
+                  }
+                  Insert: {
+                    "confirmation_request_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"count_no": string,"created_at"?: string,"created_by": string,"id"?: string,"remark"?: string | null,"status"?: Database["public"]['Enums']["stock_count_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "confirmation_request_id"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"count_no"?: string,"created_at"?: string,"created_by"?: string,"id"?: string,"remark"?: string | null,"status"?: Database["public"]['Enums']["stock_count_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_counts_confirmed_by_fkey"
+      columns: ["confirmed_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_counts_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"stock_in_items": {
                   Row: {
                     "id": string,"product_id": string,"quantity": number,"stock_in_order_id": string
@@ -293,13 +393,13 @@ isOneToOne: false
                   ]
                 },"stock_records": {
                   Row: {
-                    "created_at": string,"created_by": string,"id": string,"product_id": string,"purchase_receipt_item_id": string | null,"quantity_delta": number,"sales_order_item_id": string | null,"stock_in_item_id": string | null
+                    "created_at": string,"created_by": string,"id": string,"product_id": string,"purchase_receipt_item_id": string | null,"quantity_delta": number,"sales_order_item_id": string | null,"stock_adjustment_item_id": string | null,"stock_in_item_id": string | null
                   }
                   Insert: {
-                    "created_at"?: string,"created_by": string,"id"?: string,"product_id": string,"purchase_receipt_item_id"?: string | null,"quantity_delta": number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
+                    "created_at"?: string,"created_by": string,"id"?: string,"product_id": string,"purchase_receipt_item_id"?: string | null,"quantity_delta": number,"sales_order_item_id"?: string | null,"stock_adjustment_item_id"?: string | null,"stock_in_item_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string,"id"?: string,"product_id"?: string,"purchase_receipt_item_id"?: string | null,"quantity_delta"?: number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
+                    "created_at"?: string,"created_by"?: string,"id"?: string,"product_id"?: string,"purchase_receipt_item_id"?: string | null,"quantity_delta"?: number,"sales_order_item_id"?: string | null,"stock_adjustment_item_id"?: string | null,"stock_in_item_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -325,6 +425,12 @@ isOneToOne: false
       columns: ["sales_order_item_id"]
 isOneToOne: false
       referencedRelation: "sales_order_items"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_records_stock_adjustment_item_id_fkey"
+      columns: ["stock_adjustment_item_id"]
+isOneToOne: false
+      referencedRelation: "stock_adjustment_items"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "stock_records_stock_in_item_id_fkey"
@@ -403,11 +509,20 @@ isOneToOne: false
 "cancel_sales_order":
 { Args: { "p_order_id": string }; Returns: undefined
                            },
+"cancel_stock_count":
+{ Args: { "p_stock_count_id": string }; Returns: undefined
+                           },
 "confirm_purchase_order":
 { Args: { "p_order_id": string }; Returns: undefined
                            },
+"confirm_stock_count":
+{ Args: { "p_request_id": string,"p_stock_count_id": string }; Returns: string
+                           },
 "create_product":
 { Args: { "p_age_range": string | null,"p_barcode": string | null,"p_brand": string | null,"p_category": string,"p_cost_price": number,"p_image_path": string | null,"p_low_stock_threshold": number | null,"p_name": string,"p_sale_price": number,"p_sku": string }; Returns: string
+                           },
+"create_stock_count":
+{ Args: { "p_remark": string | null }; Returns: string
                            },
 "current_user_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
@@ -424,6 +539,9 @@ isOneToOne: false
 "get_sales_order":
 { Args: { "p_order_id": string }; Returns: Json
                            },
+"get_stock_count":
+{ Args: { "p_id": string }; Returns: Json
+                           },
 "get_stock_in":
 { Args: { "p_order_id": string }; Returns: Json
                            },
@@ -432,6 +550,11 @@ isOneToOne: false
                            },
 "is_active_user":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"list_inventory":
+{ Args: { "p_alert_only"?: boolean,"p_query"?: string }; Returns: {
+              "barcode": string,"category": string,"id": string,"low_stock_threshold": number,"name": string,"sku": string,"status": Database["public"]['Enums']["product_status"],"stock_qty": number
+            }[]
                            },
 "list_low_stock_products":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -458,6 +581,16 @@ isOneToOne: false
               "created_at": string,"customer_name": string | null,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"status": Database["public"]['Enums']["sales_order_status"],"total_amount": number
             }[]
                            },
+"list_stock_adjustments":
+{ Args: { "p_date"?: string | null,"p_query"?: string,"p_type"?: Database["public"]['Enums']["stock_adjustment_type"] | null }; Returns: {
+              "adjustment_no": string,"created_at": string,"id": string,"reason": string,"type": Database["public"]['Enums']["stock_adjustment_type"]
+            }[]
+                           },
+"list_stock_counts":
+{ Args: { "p_date"?: string | null,"p_query"?: string,"p_status"?: Database["public"]['Enums']["stock_count_status"] | null }; Returns: {
+              "count_no": string,"created_at": string,"id": string,"status": Database["public"]['Enums']["stock_count_status"]
+            }[]
+                           },
 "list_stock_records":
 { Args: { "p_date"?: string | null,"p_product_id"?: string | null,"p_source"?: string | null }; Returns: {
               "created_at": string,"id": string,"product_id": string,"product_name": string,"quantity_delta": number,"sku": string,"source": string,"source_order_no": string | null
@@ -471,6 +604,9 @@ isOneToOne: false
                            },
 "post_purchase_receipt":
 { Args: { "p_items": Json,"p_purchase_order_id": string,"p_remark": string | null,"p_request_id": string }; Returns: string
+                           },
+"post_stock_adjustment":
+{ Args: { "p_items": Json,"p_reason": string,"p_request_id": string,"p_type": Database["public"]['Enums']["stock_adjustment_type"] }; Returns: string
                            },
 "post_stock_in":
 { Args: { "p_order_id": string }; Returns: undefined
@@ -486,6 +622,9 @@ isOneToOne: false
                            },
 "save_sales_order":
 { Args: { "p_confirm"?: boolean,"p_customer_id"?: string | null,"p_items"?: Json,"p_order_id"?: string | null,"p_remark"?: string | null }; Returns: string
+                           },
+"save_stock_count_draft":
+{ Args: { "p_items": Json,"p_stock_count_id": string }; Returns: undefined
                            },
 "save_stock_in_draft":
 { Args: { "p_items"?: Json,"p_order_id"?: string | null,"p_remark"?: string | null }; Returns: string
@@ -504,7 +643,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","purchase_order_status": "draft"|"confirmed"|"partially_received"|"completed"|"cancelled","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
+            "app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","purchase_order_status": "draft"|"confirmed"|"partially_received"|"completed"|"cancelled","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_adjustment_type": "stock_count"|"surplus"|"shortage"|"damage"|"manual","stock_count_status": "draft"|"confirmed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -624,7 +763,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"purchase_order_status": ["draft", "confirmed", "partially_received", "completed", "cancelled"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
+            "app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"purchase_order_status": ["draft", "confirmed", "partially_received", "completed", "cancelled"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_adjustment_type": ["stock_count", "surplus", "shortage", "damage", "manual"],"stock_count_status": ["draft", "confirmed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
           }
         }
 } as const
