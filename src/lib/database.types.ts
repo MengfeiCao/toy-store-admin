@@ -57,6 +57,11 @@ export type Database = {
       current_user_role: { Args: Record<string, never>; Returns: Database['public']['Enums']['app_role'] | null };
       is_active_user: { Args: Record<string, never>; Returns: boolean };
       require_owner: { Args: Record<string, never>; Returns: undefined };
+      list_products: { Args: { p_query: string; p_status: Database['public']['Enums']['product_status'] | null }; Returns: Array<{ id: string; sku: string; barcode: string | null; name: string; category: string; brand: string | null; age_range: string | null; sale_price: number; cost_price: number | null; stock_qty: number; low_stock_threshold: number | null; image_path: string | null; status: Database['public']['Enums']['product_status'] }> };
+      create_product: { Args: { p_sku: string; p_barcode: string | null; p_name: string; p_category: string; p_brand: string | null; p_age_range: string | null; p_cost_price: number; p_sale_price: number; p_low_stock_threshold: number | null; p_image_path: string | null }; Returns: string };
+      update_product_public: { Args: { p_id: string; p_barcode: string | null; p_name: string; p_category: string; p_brand: string | null; p_age_range: string | null; p_low_stock_threshold: number | null; p_image_path: string | null }; Returns: undefined };
+      update_product_pricing: { Args: { p_id: string; p_cost_price: number; p_sale_price: number }; Returns: undefined };
+      set_product_status: { Args: { p_id: string; p_status: Database['public']['Enums']['product_status'] }; Returns: undefined };
     };
     Enums: {
       app_role: 'owner' | 'staff';

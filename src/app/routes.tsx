@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from '../auth/LoginPage';
 import { ProtectedRoute } from '../auth/ProtectedRoute';
 import { AppShell } from './AppShell';
+import { ProductListPage } from '../features/products/ProductListPage';
 
 function PlaceholderPage({ title }: { title: string }) {
   return <section className="placeholder-page"><p className="eyebrow">乐奇玩具</p><h1>{title}</h1><p>此页面将在后续 task 中接入真实业务模块。</p></section>;
@@ -14,7 +15,7 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<PlaceholderPage title="经营概览" />} />
-          <Route path="/products" element={<PlaceholderPage title="玩具管理" />} />
+          <Route path="/products" element={<ProductListPage />} />
           <Route path="/stock-in" element={<PlaceholderPage title="入库单" />} />
           <Route path="/records" element={<PlaceholderPage title="库存流水" />} />
           <Route path="/customers" element={<PlaceholderPage title="客户管理" />} />
