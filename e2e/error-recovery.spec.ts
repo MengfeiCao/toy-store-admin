@@ -27,15 +27,15 @@ test('库存不足时不完成订单', async ({ page }) => {
   await page.getByLabel('选择玩具').selectOption({ label: `${productName} · 20.00 元` });
   await page.getByRole('button', { name: '添加玩具' }).click();
   await page.getByRole('button', { name: '确认订单' }).click();
-  await expect(page.getByText('订单已确认')).toBeVisible();
-
-  await page.goto('/sales');
-  const newestOrder = page.locator('tbody tr').first();
-  await expect(newestOrder).toContainText('待出库');
-  await newestOrder.getByRole('link').click();
+  await expect(page).toHaveURL(/\/sales\/.+\/detail/);
   await page.getByRole('button', { name: '确认出库' }).click();
 
   await expect(page.getByRole('alert')).toContainText('库存不足');
   await expect(page.getByRole('button', { name: '确认出库' })).toBeEnabled();
   await expect(page.getByText('待出库')).toBeVisible();
+
+  await page.goto('/sales');
+  const pendingRow = page.locator('tbody tr').first();
+  await pendingRow.getByRole('button', { name: '取消' }).click();
+  await expect(pendingRow).toContainText('已取消');
 });

@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "test": "vitest",
     "test:db": "supabase test db",
-    "test:e2e": "playwright test"
+    "setup:e2e": "node scripts/setup-local-e2e.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:local": "node scripts/run-local-e2e.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

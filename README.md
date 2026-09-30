@@ -9,7 +9,8 @@ npm install
 npm run dev
 npm test -- --run
 npm run build
-npm run test:e2e
+npm run setup:e2e
+npm run test:e2e:local
 ```
 
 本地 Supabase、迁移、Edge Function 和 Vercel 配置请看 [部署与操作说明](docs/operations/setup-and-deploy.md)，验收记录填写 [验收清单](docs/operations/acceptance-checklist.md)。

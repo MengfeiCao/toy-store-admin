@@ -19,5 +19,7 @@ describe('SalesOrderListPage', () => {
     expect(await screen.findByRole('link', { name: 'XS-DRAFT' })).toHaveAttribute('href', '/sales/draft-1');
     expect(screen.getByRole('link', { name: 'XS-PENDING' })).toHaveAttribute('href', '/sales/pending-1/detail');
     expect(screen.getByRole('link', { name: 'XS-COMPLETED' })).toHaveAttribute('href', '/sales/completed-1/detail');
+    expect(screen.getByLabelText('收款状态')).toBeInTheDocument();
+    expect(screen.getByLabelText('订单日期')).toBeInTheDocument();
   });
 });

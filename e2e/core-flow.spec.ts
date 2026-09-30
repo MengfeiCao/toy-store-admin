@@ -16,6 +16,11 @@ test.describe('核心业务闭环', () => {
     const runId = Date.now().toString(36).toUpperCase();
     const productName = `验收玩具-${runId}`;
     const sku = `E2E-${runId}`;
+    const metric = async (label: string) => Number((await page.locator('.metric-card').filter({ hasText: label }).locator('strong').innerText()).replace(/[¥,]/g, ''));
+    const salesBefore = await metric('销售额');
+    const costBefore = await metric('成本');
+    const profitBefore = await metric('毛利润');
+    const ordersBefore = await metric('订单数');
 
     await page.goto('/products');
     await page.getByRole('button', { name: '新增玩具' }).click();
@@ -36,17 +41,12 @@ test.describe('核心业务闭环', () => {
     await page.goto('/sales/new');
     await page.getByLabel('选择玩具').selectOption({ label: `${productName} · 100.00 元` });
     await page.getByRole('button', { name: '添加玩具' }).click();
-    await page.getByLabel(`数量-${productName}`).fill('2');
+    await page.getByLabel(`数量-${productName}`).fill('3');
     await page.getByRole('button', { name: '确认订单' }).click();
-    await expect(page.getByText('订单已确认')).toBeVisible();
-
-    await page.goto('/sales');
-    const newestOrder = page.locator('tbody tr').first();
-    await expect(newestOrder).toContainText('待出库');
-    await newestOrder.getByRole('link').click();
     await expect(page).toHaveURL(/\/sales\/.+\/detail/);
+    const orderDetailUrl = page.url();
     await expect(page.getByText(productName)).toBeVisible();
-    await expect(page.getByText('金额：¥200.00')).toBeVisible();
+    await expect(page.getByText('金额：¥300.00')).toBeVisible();
 
     await page.getByRole('button', { name: '确认出库' }).click();
     await expect(page.getByText('已完成')).toBeVisible();
@@ -56,16 +56,38 @@ test.describe('核心业务闭环', () => {
     await page.goto('/products');
     await page.getByLabel('搜索玩具').fill(sku);
     const productRow = page.locator('tbody tr').filter({ hasText: sku });
-    await expect(productRow).toContainText('8 件');
+    await expect(productRow).toContainText('7 件');
+
+    await productRow.getByRole('button', { name: '编辑' }).click();
+    await page.getByLabel('售价').fill('120');
+    await page.getByRole('button', { name: '保存' }).click();
+    await page.goto(orderDetailUrl);
+    await expect(page.getByText('金额：¥300.00')).toBeVisible();
+    await expect(page.getByText('¥100.00')).toBeVisible();
 
     await page.goto('/records');
     const stockRows = page.locator('tbody tr').filter({ hasText: sku });
     await expect(stockRows).toHaveCount(2);
-    await expect(stockRows.filter({ hasText: '+10' })).toBeVisible();
-    await expect(stockRows.filter({ hasText: '-2' })).toBeVisible();
+    await expect(stockRows.getByRole('cell', { name: '+10', exact: true })).toBeVisible();
+    await expect(stockRows.getByRole('cell', { name: '-3', exact: true })).toBeVisible();
 
     await page.goto('/dashboard');
-    await expect(page.getByText('销售额')).toBeVisible();
-    await expect(page.getByText('毛利润')).toBeVisible();
+    await expect(page.locator('.metric-card').filter({ hasText: '销售额' }).locator('strong')).toHaveText(`¥${(salesBefore + 300).toFixed(2)}`);
+    await expect(page.locator('.metric-card').filter({ hasText: '成本' }).locator('strong')).toHaveText(`¥${(costBefore + 180).toFixed(2)}`);
+    await expect(page.locator('.metric-card').filter({ hasText: '毛利润' }).locator('strong')).toHaveText(`¥${(profitBefore + 120).toFixed(2)}`);
+    await expect(page.locator('.metric-card').filter({ hasText: '订单数' }).locator('strong')).toHaveText(String(ordersBefore + 1));
+  });
+
+  test('保存草稿后确认复用同一张订单', async ({ page }) => {
+    await page.goto('/sales/new');
+    await page.getByRole('button', { name: '添加玩具' }).click();
+    await page.getByRole('button', { name: '保存草稿' }).click();
+    await expect(page).toHaveURL(/\/sales\/[0-9a-f-]{36}$/);
+    const draftUrl = page.url();
+
+    await page.getByRole('button', { name: '确认订单' }).click();
+
+    await expect(page).toHaveURL(`${draftUrl}/detail`);
+    await expect(page.getByText('待出库')).toBeVisible();
   });
 });

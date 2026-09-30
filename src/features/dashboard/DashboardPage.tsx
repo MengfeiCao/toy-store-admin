@@ -4,7 +4,8 @@ import { getDashboard, listLowStockProducts } from './dashboard.api';
 import type { Dashboard, DateRange, LowStockProduct } from './dashboard.types';
 
 function money(value: number) { return `¥${value.toFixed(2)}`; }
-function currentRange(): DateRange { const now = new Date(); return { from: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10), to: now.toISOString().slice(0, 10) }; }
+function localDate(date: Date) { const month = String(date.getMonth() + 1).padStart(2, '0'); const day = String(date.getDate()).padStart(2, '0'); return `${date.getFullYear()}-${month}-${day}`; }
+export function currentRange(now = new Date()): DateRange { return { from: localDate(new Date(now.getFullYear(), now.getMonth(), 1)), to: localDate(now) }; }
 
 export function DashboardPage() {
   const { profile } = useAuth();

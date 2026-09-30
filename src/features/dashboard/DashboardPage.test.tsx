@@ -1,12 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { DashboardPage } from './DashboardPage';
+import { currentRange, DashboardPage } from './DashboardPage';
 
 const mocks = vi.hoisted(() => ({ useAuth: vi.fn(), getDashboard: vi.fn(), listLowStockProducts: vi.fn() }));
 vi.mock('../../auth/AuthProvider', () => ({ useAuth: mocks.useAuth }));
 vi.mock('./dashboard.api', () => ({ getDashboard: mocks.getDashboard, listLowStockProducts: mocks.listLowStockProducts }));
 
 describe('DashboardPage', () => {
+  it('uses_local_calendar_dates_for_the_month_range', () => {
+    expect(currentRange(new Date(2026, 9, 1, 0, 30))).toEqual({ from: '2026-10-01', to: '2026-10-01' });
+  });
+
   it('shows_owner_metrics_and_low_stock', async () => {
     mocks.useAuth.mockReturnValue({ profile: { role: 'owner' } });
     mocks.getDashboard.mockResolvedValue({ role: 'owner', salesAmount: 300, costAmount: 180, grossProfit: 120, orderCount: 1 });
