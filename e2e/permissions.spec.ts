@@ -21,4 +21,7 @@ test('店员看不到商品成本、利润和用户管理，但可使用采购�
   await expect(page.getByRole('columnheader', { name: '成本' })).not.toBeVisible();
   await page.goto('/purchases');
   await expect(page.getByRole('heading', { name: '采购订单' })).toBeVisible();
+  await page.goto('/reports');
+  await expect(page.getByRole('heading', { name: '经营报表' })).toBeVisible();
+  await expect(page.getByText('毛利润')).not.toBeVisible();
 });

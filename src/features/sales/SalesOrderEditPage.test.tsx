@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SalesOrderEditPage } from './SalesOrderEditPage';
@@ -24,10 +25,9 @@ describe('SalesOrderEditPage', () => {
     expect(await screen.findByText('新建销售订单')).toBeInTheDocument();
     expect(screen.getByText('保存草稿')).toBeInTheDocument();
     expect(screen.getByText('确认订单')).toBeInTheDocument();
-    const productSelect = screen.getByLabelText('选择玩具');
-    fireEvent.change(productSelect, { target: { value: 'p1' } });
     fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
-    fireEvent.change(productSelect, { target: { value: 'p2' } });
+    await userEvent.click(screen.getByRole('combobox', { name: '选择玩具' }));
+    await userEvent.click(screen.getByRole('option', { name: '小车 · 100.00 元' }));
     fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
     expect(screen.getByText('合计 ¥200.00')).toBeInTheDocument();
     expect(screen.getAllByLabelText('售价')[0]).toHaveAttribute('readonly');
@@ -39,7 +39,6 @@ describe('SalesOrderEditPage', () => {
     mocks.saveSalesOrder.mockResolvedValue('o1');
     renderPage();
     await screen.findByText('新建销售订单');
-    fireEvent.change(screen.getByLabelText('选择玩具'), { target: { value: 'p1' } });
     fireEvent.click(screen.getByRole('button', { name: '添加玩具' }));
     fireEvent.click(screen.getByRole('button', { name: '确认订单' }));
     await waitFor(() => expect(mocks.saveSalesOrder).toHaveBeenCalledWith(expect.objectContaining({ confirm: true })));

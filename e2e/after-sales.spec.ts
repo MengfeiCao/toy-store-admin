@@ -41,7 +41,7 @@ test('已付款订单部分退货退款并完成同款换货', async ({ page }) 
   await page.getByRole('button', { name: '确认到货' }).click();
 
   await page.goto('/sales/new');
-  await page.getByLabel('选择玩具').selectOption({ label: `${productName} · 20.00 元` });
+  await expect(page.getByText(`${productName} · 20.00 元`)).toBeVisible();
   await page.getByRole('button', { name: '添加玩具' }).click();
   await page.getByLabel(`数量-${productName}`).fill('3');
   await page.getByRole('button', { name: '确认订单' }).click();
