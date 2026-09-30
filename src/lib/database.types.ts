@@ -111,6 +111,62 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"purchase_receipt_items": {
+                  Row: {
+                    "id": string,"product_id": string,"product_name_snapshot": string,"purchase_order_item_id": string,"purchase_receipt_id": string,"quantity": number,"sku_snapshot": string,"unit_cost_snapshot": number
+                  }
+                  Insert: {
+                    "id"?: string,"product_id": string,"product_name_snapshot": string,"purchase_order_item_id": string,"purchase_receipt_id": string,"quantity": number,"sku_snapshot": string,"unit_cost_snapshot": number
+                  }
+                  Update: {
+                    "id"?: string,"product_id"?: string,"product_name_snapshot"?: string,"purchase_order_item_id"?: string,"purchase_receipt_id"?: string,"quantity"?: number,"sku_snapshot"?: string,"unit_cost_snapshot"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "purchase_receipt_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_receipt_items_purchase_order_item_id_fkey"
+      columns: ["purchase_order_item_id"]
+isOneToOne: false
+      referencedRelation: "purchase_order_items"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_receipt_items_purchase_receipt_id_fkey"
+      columns: ["purchase_receipt_id"]
+isOneToOne: false
+      referencedRelation: "purchase_receipts"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"purchase_receipts": {
+                  Row: {
+                    "id": string,"purchase_order_id": string,"receipt_no": string,"received_at": string,"received_by": string,"remark": string | null,"request_payload": NonNullable<Json>,"supplier_name_snapshot": string
+                  }
+                  Insert: {
+                    "id": string,"purchase_order_id": string,"receipt_no": string,"received_at"?: string,"received_by": string,"remark"?: string | null,"request_payload": NonNullable<Json>,"supplier_name_snapshot": string
+                  }
+                  Update: {
+                    "id"?: string,"purchase_order_id"?: string,"receipt_no"?: string,"received_at"?: string,"received_by"?: string,"remark"?: string | null,"request_payload"?: NonNullable<Json>,"supplier_name_snapshot"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "purchase_receipts_purchase_order_id_fkey"
+      columns: ["purchase_order_id"]
+isOneToOne: false
+      referencedRelation: "purchase_orders"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "purchase_receipts_received_by_fkey"
+      columns: ["received_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"sales_order_items": {
                   Row: {
                     "id": string,"product_id": string,"product_name_snapshot": string,"quantity": number,"sales_order_id": string,"sku_snapshot": string,"unit_cost_snapshot": number | null,"unit_price": number
@@ -237,13 +293,13 @@ isOneToOne: false
                   ]
                 },"stock_records": {
                   Row: {
-                    "created_at": string,"created_by": string,"id": string,"product_id": string,"quantity_delta": number,"sales_order_item_id": string | null,"stock_in_item_id": string | null
+                    "created_at": string,"created_by": string,"id": string,"product_id": string,"purchase_receipt_item_id": string | null,"quantity_delta": number,"sales_order_item_id": string | null,"stock_in_item_id": string | null
                   }
                   Insert: {
-                    "created_at"?: string,"created_by": string,"id"?: string,"product_id": string,"quantity_delta": number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
+                    "created_at"?: string,"created_by": string,"id"?: string,"product_id": string,"purchase_receipt_item_id"?: string | null,"quantity_delta": number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string,"id"?: string,"product_id"?: string,"quantity_delta"?: number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
+                    "created_at"?: string,"created_by"?: string,"id"?: string,"product_id"?: string,"purchase_receipt_item_id"?: string | null,"quantity_delta"?: number,"sales_order_item_id"?: string | null,"stock_in_item_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -259,6 +315,12 @@ isOneToOne: false
       referencedRelation: "products"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "stock_records_purchase_receipt_item_id_fkey"
+      columns: ["purchase_receipt_item_id"]
+isOneToOne: false
+      referencedRelation: "purchase_receipt_items"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "stock_records_sales_order_item_id_fkey"
       columns: ["sales_order_item_id"]
 isOneToOne: false
@@ -269,6 +331,31 @@ isOneToOne: false
       columns: ["stock_in_item_id"]
 isOneToOne: false
       referencedRelation: "stock_in_items"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"supplier_payments": {
+                  Row: {
+                    "amount": number,"id": string,"paid_at": string,"paid_by": string,"purchase_order_id": string,"request_payload": NonNullable<Json>
+                  }
+                  Insert: {
+                    "amount": number,"id": string,"paid_at"?: string,"paid_by": string,"purchase_order_id": string,"request_payload": NonNullable<Json>
+                  }
+                  Update: {
+                    "amount"?: number,"id"?: string,"paid_at"?: string,"paid_by"?: string,"purchase_order_id"?: string,"request_payload"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "supplier_payments_paid_by_fkey"
+      columns: ["paid_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "supplier_payments_purchase_order_id_fkey"
+      columns: ["purchase_order_id"]
+isOneToOne: true
+      referencedRelation: "purchase_orders"
       referencedColumns: ["id"]
     }
                   ]
@@ -331,11 +418,17 @@ isOneToOne: false
 "get_purchase_order":
 { Args: { "p_order_id": string }; Returns: Json
                            },
+"get_purchase_receipt":
+{ Args: { "p_receipt_id": string }; Returns: Json
+                           },
 "get_sales_order":
 { Args: { "p_order_id": string }; Returns: Json
                            },
 "get_stock_in":
 { Args: { "p_order_id": string }; Returns: Json
+                           },
+"get_supplier_payment":
+{ Args: { "p_payment_id": string }; Returns: Json
                            },
 "is_active_user":
 { Args: Record<PropertyKey, never>; Returns: boolean
@@ -355,6 +448,11 @@ isOneToOne: false
               "created_at": string,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"status": Database["public"]['Enums']["purchase_order_status"],"supplier_name": string,"total_amount": number
             }[]
                            },
+"list_purchase_receipts":
+{ Args: { "p_date"?: string | null,"p_purchase_order_id"?: string | null,"p_query"?: string,"p_supplier_id"?: string | null }; Returns: {
+              "id": string,"purchase_order_id": string,"purchase_order_no": string,"receipt_no": string,"received_at": string,"supplier_name": string,"total_quantity": number
+            }[]
+                           },
 "list_sales_orders":
 { Args: { "p_date"?: string | null,"p_payment_status"?: string | null,"p_query"?: string,"p_status"?: string | null }; Returns: {
               "created_at": string,"customer_name": string | null,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"status": Database["public"]['Enums']["sales_order_status"],"total_amount": number
@@ -365,8 +463,14 @@ isOneToOne: false
               "created_at": string,"id": string,"product_id": string,"product_name": string,"quantity_delta": number,"sku": string,"source": string,"source_order_no": string | null
             }[]
                            },
+"mark_purchase_order_paid":
+{ Args: { "p_purchase_order_id": string,"p_request_id": string }; Returns: string
+                           },
 "mark_sales_order_paid":
 { Args: { "p_order_id": string,"p_payment_method": Database["public"]['Enums']["payment_method"] }; Returns: undefined
+                           },
+"post_purchase_receipt":
+{ Args: { "p_items": Json,"p_purchase_order_id": string,"p_remark": string | null,"p_request_id": string }; Returns: string
                            },
 "post_stock_in":
 { Args: { "p_order_id": string }; Returns: undefined
