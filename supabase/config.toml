@@ -1,0 +1,7 @@
+project_id = "toy-store-admin"
+
+[db]
+enabled = true
+
+[auth]
+enabled = true
