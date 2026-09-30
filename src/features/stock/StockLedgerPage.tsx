@@ -12,6 +12,8 @@ const sourceLabels: Record<StockRecordSource, string> = {
   shortage: '短缺调整',
   damage: '破损调整',
   manual: '手工调整',
+  return_in: '售后退回',
+  exchange_out: '换货发出',
 };
 
 export function StockLedgerPage() {

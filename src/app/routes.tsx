@@ -21,6 +21,9 @@ import { StockAlertsPage } from '../features/inventory/StockAlertsPage';
 import { StockCountListPage } from '../features/inventory/StockCountListPage';
 import { StockCountDetailPage } from '../features/inventory/StockCountDetailPage';
 import { StockAdjustmentPage } from '../features/inventory/StockAdjustmentPage';
+import { AfterSalesListPage } from '../features/after-sales/AfterSalesListPage';
+import { AfterSalesCreatePage } from '../features/after-sales/AfterSalesCreatePage';
+import { AfterSalesDetailPage } from '../features/after-sales/AfterSalesDetailPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -53,6 +56,16 @@ function StockCountDetailRoute() {
   return <StockCountDetailPage countId={id} />;
 }
 
+function AfterSalesCreateRoute() {
+  const { id = '' } = useParams();
+  return <AfterSalesCreatePage orderId={id} />;
+}
+
+function AfterSalesDetailRoute() {
+  const { id = '' } = useParams();
+  return <AfterSalesDetailPage id={id} />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -79,6 +92,9 @@ export function AppRoutes() {
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
           <Route path="/sales/:id/detail" element={<SalesOrderDetailRoute />} />
+          <Route path="/sales/:id/after-sales" element={<AfterSalesCreateRoute />} />
+          <Route path="/after-sales" element={<AfterSalesListPage />} />
+          <Route path="/after-sales/:id" element={<AfterSalesDetailRoute />} />
           <Route path="/users" element={<ProtectedRoute allow={['owner']}><UserManagementPage /></ProtectedRoute>} />
         </Route>
       </Route>

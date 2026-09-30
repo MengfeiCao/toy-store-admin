@@ -20,6 +20,7 @@ const navGroups = [
   { label: '销售', items: [
     { to: '/customers', label: '客户管理' },
     { to: '/sales', label: '销售订单' },
+    { to: '/after-sales', label: '售后管理' },
   ] },
 ];
 
