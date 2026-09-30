@@ -16,6 +16,11 @@ import { PurchaseOrderListPage } from '../features/purchases/PurchaseOrderListPa
 import { PurchaseOrderEditPage } from '../features/purchases/PurchaseOrderEditPage';
 import { PurchaseOrderDetailPage } from '../features/purchases/PurchaseOrderDetailPage';
 import { PurchaseReceiptListPage } from '../features/purchases/PurchaseReceiptListPage';
+import { InventoryPage } from '../features/inventory/InventoryPage';
+import { StockAlertsPage } from '../features/inventory/StockAlertsPage';
+import { StockCountListPage } from '../features/inventory/StockCountListPage';
+import { StockCountDetailPage } from '../features/inventory/StockCountDetailPage';
+import { StockAdjustmentPage } from '../features/inventory/StockAdjustmentPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -43,6 +48,11 @@ function PurchaseOrderDetailRoute() {
   return <PurchaseOrderDetailPage orderId={id} />;
 }
 
+function StockCountDetailRoute() {
+  const { id = '' } = useParams();
+  return <StockCountDetailPage countId={id} />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -60,6 +70,11 @@ export function AppRoutes() {
           <Route path="/purchases/:id" element={<PurchaseOrderEditRoute />} />
           <Route path="/purchases/:id/detail" element={<PurchaseOrderDetailRoute />} />
           <Route path="/purchase-receipts" element={<PurchaseReceiptListPage />} />
+          <Route path="/inventory" element={<InventoryPage />} />
+          <Route path="/stock-alerts" element={<StockAlertsPage />} />
+          <Route path="/stock-counts" element={<StockCountListPage />} />
+          <Route path="/stock-counts/:id" element={<StockCountDetailRoute />} />
+          <Route path="/stock-adjustments" element={<StockAdjustmentPage />} />
           <Route path="/sales" element={<SalesOrderListPage />} />
           <Route path="/sales/new" element={<SalesOrderEditPage />} />
           <Route path="/sales/:id" element={<SalesOrderEditRoute />} />
