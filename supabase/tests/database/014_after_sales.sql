@@ -1,5 +1,5 @@
 begin;
-select plan(22);
+select plan(23);
 
 select has_table('public', 'after_sales_orders', '售后单表存在');
 select has_table('public', 'after_sales_items', '售后明细表存在');
@@ -7,7 +7,7 @@ select has_table('public', 'refunds', '退款表存在');
 select ok(to_regprocedure('public.post_after_sales(uuid,uuid,public.after_sales_type,text,jsonb)') is not null, '售后原子函数存在');
 
 insert into auth.users (id, email) values ('14000000-0000-0000-0000-000000000001', 'after-sales@test.local');
-insert into public.users (id, name, role, status) values ('14000000-0000-0000-0000-000000000001', '售后店员', 'staff', 'active');
+insert into public.users (id, name, role, status) values ('14000000-0000-0000-0000-000000000001', '售后店主', 'owner', 'active');
 do $$ begin perform set_config('request.jwt.claim.sub', '14000000-0000-0000-0000-000000000001', true); end $$;
 
 insert into public.products (id, sku, name, category, cost_price, sale_price, stock_qty) values
@@ -20,6 +20,7 @@ values ('54000000-0000-0000-0000-000000000001', '44000000-0000-0000-0000-0000000
 select lives_ok($$select public.post_after_sales('64000000-0000-4000-8000-000000000001','44000000-0000-0000-0000-000000000001','return','完好退货','[{"salesOrderItemId":"54000000-0000-0000-0000-000000000001","quantity":2,"condition":"good"}]')$$, '完好部分退货成功');
 select is((select stock_qty from public.products where id='34000000-0000-0000-0000-000000000001'), 7, '完好退货恢复库存');
 select is((select amount from public.refunds where after_sales_order_id='64000000-0000-4000-8000-000000000001'), 40.00::numeric, '已付款订单按原售价退款');
+select throws_ok($$select public.revert_sales_order_payment('44000000-0000-0000-0000-000000000001')$$, 'P0001', 'REFUNDED_ORDER_PAYMENT_IMMUTABLE', '已退款订单保持已收款状态');
 select lives_ok($$select public.post_after_sales('64000000-0000-4000-8000-000000000001','44000000-0000-0000-0000-000000000001','return','完好退货','[{"salesOrderItemId":"54000000-0000-0000-0000-000000000001","quantity":2,"condition":"good"}]')$$, '相同请求可重放');
 select is((select stock_qty from public.products where id='34000000-0000-0000-0000-000000000001'), 7, '重放不重复回库');
 
