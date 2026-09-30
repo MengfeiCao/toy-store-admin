@@ -530,8 +530,16 @@ isOneToOne: false
 "get_after_sales":
 { Args: { "p_id": string }; Returns: Json
                            },
+"get_business_report":
+{ Args: { "p_from": string,"p_to": string }; Returns: Json
+                           },
 "get_dashboard":
 { Args: { "p_from": string,"p_to": string }; Returns: Json
+                           },
+"get_product_by_barcode":
+{ Args: { "p_barcode": string }; Returns: {
+              "barcode": string,"id": string,"name": string,"sale_price": number,"sku": string,"stock_qty": number
+            }[]
                            },
 "get_purchase_order":
 { Args: { "p_order_id": string }; Returns: Json
@@ -587,6 +595,11 @@ isOneToOne: false
 "list_sales_orders":
 { Args: { "p_date"?: string | null,"p_payment_status"?: string | null,"p_query"?: string,"p_status"?: string | null }; Returns: {
               "created_at": string,"customer_name": string | null,"id": string,"order_no": string,"payment_status": Database["public"]['Enums']["payment_status"],"status": Database["public"]['Enums']["sales_order_status"],"total_amount": number
+            }[]
+                           },
+"list_slow_moving_products":
+{ Args: { "p_days"?: number }; Returns: {
+              "id": string,"last_sold_at": string | null,"name": string,"sku": string,"stock_qty": number
             }[]
                            },
 "list_stock_adjustments":
