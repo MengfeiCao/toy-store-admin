@@ -527,6 +527,9 @@ isOneToOne: false
 "current_user_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
                            },
+"get_after_sales":
+{ Args: { "p_id": string }; Returns: Json
+                           },
 "get_dashboard":
 { Args: { "p_from": string,"p_to": string }; Returns: Json
                            },
@@ -550,6 +553,11 @@ isOneToOne: false
                            },
 "is_active_user":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"list_after_sales":
+{ Args: { "p_date"?: string | null,"p_query"?: string,"p_type"?: Database["public"]['Enums']["after_sales_type"] | null }; Returns: {
+              "after_sales_no": string,"completed_at": string,"customer_name": string,"id": string,"refund_amount": number,"sales_order_id": string,"sales_order_no": string,"total_quantity": number,"type": Database["public"]['Enums']["after_sales_type"]
+            }[]
                            },
 "list_inventory":
 { Args: { "p_alert_only"?: boolean,"p_query"?: string }; Returns: {
@@ -607,6 +615,9 @@ isOneToOne: false
 "mark_sales_order_paid":
 { Args: { "p_order_id": string,"p_payment_method": Database["public"]['Enums']["payment_method"] }; Returns: undefined
                            },
+"post_after_sales":
+{ Args: { "p_items": Json,"p_remark": string | null,"p_request_id": string,"p_sales_order_id": string,"p_type": Database["public"]['Enums']["after_sales_type"] }; Returns: string
+                           },
 "post_purchase_receipt":
 { Args: { "p_items": Json,"p_purchase_order_id": string,"p_remark": string | null,"p_request_id": string }; Returns: string
                            },
@@ -648,7 +659,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","purchase_order_status": "draft"|"confirmed"|"partially_received"|"completed"|"cancelled","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_adjustment_type": "stock_count"|"surplus"|"shortage"|"damage"|"manual","stock_count_status": "draft"|"confirmed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
+            "after_sales_condition": "good"|"damaged","after_sales_status": "completed","after_sales_type": "return"|"exchange","app_role": "owner"|"staff","payment_method": "wechat"|"alipay"|"cash"|"other","payment_status": "unpaid"|"paid","product_status": "active"|"inactive","purchase_order_status": "draft"|"confirmed"|"partially_received"|"completed"|"cancelled","sales_order_status": "draft"|"pending_shipment"|"completed"|"cancelled","stock_adjustment_type": "stock_count"|"surplus"|"shortage"|"damage"|"manual","stock_count_status": "draft"|"confirmed"|"cancelled","stock_in_status": "draft"|"posted","supplier_status": "active"|"inactive","user_status": "active"|"disabled"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -768,7 +779,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"purchase_order_status": ["draft", "confirmed", "partially_received", "completed", "cancelled"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_adjustment_type": ["stock_count", "surplus", "shortage", "damage", "manual"],"stock_count_status": ["draft", "confirmed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
+            "after_sales_condition": ["good", "damaged"],"after_sales_status": ["completed"],"after_sales_type": ["return", "exchange"],"app_role": ["owner", "staff"],"payment_method": ["wechat", "alipay", "cash", "other"],"payment_status": ["unpaid", "paid"],"product_status": ["active", "inactive"],"purchase_order_status": ["draft", "confirmed", "partially_received", "completed", "cancelled"],"sales_order_status": ["draft", "pending_shipment", "completed", "cancelled"],"stock_adjustment_type": ["stock_count", "surplus", "shortage", "damage", "manual"],"stock_count_status": ["draft", "confirmed", "cancelled"],"stock_in_status": ["draft", "posted"],"supplier_status": ["active", "inactive"],"user_status": ["active", "disabled"]
           }
         }
 } as const
