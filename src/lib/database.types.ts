@@ -73,6 +73,8 @@ export type Database = {
       ship_sales_order: { Args: { p_order_id: string }; Returns: undefined };
       mark_sales_order_paid: { Args: { p_order_id: string; p_payment_method: Database['public']['Enums']['payment_method'] }; Returns: undefined };
       revert_sales_order_payment: { Args: { p_order_id: string }; Returns: undefined };
+      get_dashboard: { Args: { p_from: string; p_to: string }; Returns: Json };
+      list_low_stock_products: { Args: Record<string, never>; Returns: Array<{ id: string; sku: string; name: string; stock_qty: number; low_stock_threshold: number }> };
     };
     Enums: {
       app_role: 'owner' | 'staff';

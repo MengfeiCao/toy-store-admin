@@ -9,6 +9,7 @@ import { CustomerListPage } from '../features/customers/CustomerListPage';
 import { SalesOrderListPage } from '../features/sales/SalesOrderListPage';
 import { SalesOrderEditPage } from '../features/sales/SalesOrderEditPage';
 import { SalesOrderDetailPage } from '../features/sales/SalesOrderDetailPage';
+import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { useAuth } from '../auth/AuthProvider';
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -32,7 +33,7 @@ export function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppShell />}>
-          <Route path="/dashboard" element={<PlaceholderPage title="经营概览" />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/products" element={<ProductListPage />} />
           <Route path="/stock-in" element={<StockInPage />} />
           <Route path="/records" element={<StockLedgerPage />} />
