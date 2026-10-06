@@ -1,7 +1,14 @@
 :root {
-  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
+  --color-primary: #2563eb;
+  --color-sidebar: #172238;
+  --color-layout: #f6f8fb;
+  --color-text: #182230;
+  --color-text-secondary: #667085;
+  --color-border: #e4e7ec;
+  --radius-control: 8px;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  color: var(--color-text);
+  background: var(--color-layout);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -14,6 +21,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--color-layout);
 }
 
 button,
@@ -39,50 +47,50 @@ textarea {
   width: min(100%, 420px);
   padding: 36px;
   background: #fff;
-  border: 1px solid #e7ebf2;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(23, 32, 51, .08);
 }
 
 .login-card h1 { margin: 0; font-size: 26px; }
-.login-mark { color: #2768e8; font-weight: 700; margin: 0 0 14px; }
-.login-subtitle { color: #667085; font-size: 14px; margin: 10px 0 28px; }
+.login-mark { color: var(--color-primary); font-weight: 700; margin: 0 0 14px; }
+.login-subtitle { color: var(--color-text-secondary); font-size: 14px; margin: 10px 0 28px; }
 .login-card form { display: grid; gap: 16px; }
-.login-card label { display: grid; gap: 7px; color: #667085; font-size: 13px; }
-.login-card input { padding: 11px 12px; border: 1px solid #dfe4ec; border-radius: 8px; color: #172033; }
-.login-card button { border: 0; border-radius: 8px; padding: 11px 14px; background: #2768e8; color: #fff; font-weight: 600; }
+.login-card label { display: grid; gap: 7px; color: var(--color-text-secondary); font-size: 13px; }
+.login-card input { padding: 11px 12px; border: 1px solid #dfe4ec; border-radius: var(--radius-control); color: var(--color-text); }
+.login-card button { border: 0; border-radius: var(--radius-control); padding: 11px 14px; background: var(--color-primary); color: #fff; font-weight: 600; }
 .login-card button:disabled { opacity: .6; }
 .form-error { color: #c93636; font-size: 13px; margin: 0; }
 
-.app-shell { min-height: 100vh; display: grid; grid-template-columns: 220px minmax(0, 1fr); background: #f5f7fb; }
-.sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; min-height: 0; overflow: hidden; padding: 24px 16px; background: #172238; color: #d7dfed; }
+.app-shell { min-height: 100vh; display: grid; grid-template-columns: 220px minmax(0, 1fr); background: var(--color-layout); }
+.sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; min-height: 0; overflow: hidden; padding: 24px 16px; background: var(--color-sidebar); color: #d7dfed; }
 .sidebar-header, .account-summary { flex: 0 0 auto; }
 .brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 16px; }
-.brand-mark { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #2768e8; }
+.brand-mark { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 9px; color: #fff; background: var(--color-primary); }
 .sidebar-caption { margin: 10px 8px 18px; color: #8e9ab0; font-size: 12px; }
 .sidebar-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 18px; padding-right: 4px; }
 .sidebar-group { display: grid; gap: 4px; }
 .sidebar-group-title { margin: 0 8px 4px; color: #8e9ab0; font-size: 12px; }
 .nav-link { padding: 10px 11px; border-radius: 8px; color: #d7dfed; text-decoration: none; font-size: 13px; }
-.nav-link:hover, .nav-link.active { color: #fff; background: #2b69df; }
+.nav-link:hover, .nav-link.active { color: #fff; background: var(--color-primary); }
 .account-summary { margin-top: 16px; padding: 16px 8px 0; border-top: 1px solid rgba(255,255,255,.12); }
 .account-summary strong, .account-summary span { display: block; }
 .account-summary strong { color: #fff; font-size: 13px; }
 .account-summary span { margin-top: 4px; color: #9ba8bb; font-size: 12px; }
 .account-summary button { margin-top: 14px; padding: 0; border: 0; background: none; color: #9ba8bb; font-size: 12px; }
 .app-content { min-width: 0; padding: 32px; }
-.placeholder-page { max-width: 960px; padding: 28px; background: #fff; border: 1px solid #e7ebf2; border-radius: 14px; }
+.placeholder-page { max-width: 960px; padding: 28px; background: #fff; border: 1px solid var(--color-border); border-radius: 14px; }
 .placeholder-page h1 { margin: 4px 0 10px; }
-.placeholder-page p:last-child { color: #667085; }
-.eyebrow { color: #2768e8; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.route-state { min-height: 100vh; display: grid; place-items: center; color: #667085; font-size: 14px; }
+.placeholder-page p:last-child { color: var(--color-text-secondary); }
+.eyebrow { color: var(--color-primary); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.route-state { min-height: 100vh; display: grid; place-items: center; color: var(--color-text-secondary); font-size: 14px; }
 .feature-page { max-width: 1120px; }
 .screen-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 22px; }
 .screen-head h1 { margin: 4px 0 8px; }
-.screen-head p:last-child { margin: 0; color: #667085; font-size: 13px; }
+.screen-head p:last-child { margin: 0; color: var(--color-text-secondary); font-size: 13px; }
 .btn-primary, .btn-secondary { border: 0; border-radius: 8px; padding: 10px 14px; font-weight: 600; }
-.btn-primary { background: #2768e8; color: #fff; }
-.btn-secondary { background: #eef2f7; color: #172033; }
+.btn-primary { background: var(--color-primary); color: #fff; }
+.btn-secondary { background: #eef2f7; color: var(--color-text); }
 .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
 .search-input, .filter-select, .product-form input { width: 100%; padding: 10px 11px; border: 1px solid #dfe4ec; border-radius: 8px; background: #fff; color: #172033; }
 .search-input { max-width: 320px; }
