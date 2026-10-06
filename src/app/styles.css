@@ -55,16 +55,17 @@ textarea {
 .form-error { color: #c93636; font-size: 13px; margin: 0; }
 
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 220px minmax(0, 1fr); background: #f5f7fb; }
-.sidebar { display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; padding: 24px 16px; background: #172238; color: #d7dfed; }
+.sidebar { position: sticky; top: 0; display: flex; flex-direction: column; height: 100vh; min-height: 0; overflow: hidden; padding: 24px 16px; background: #172238; color: #d7dfed; }
+.sidebar-header, .account-summary { flex: 0 0 auto; }
 .brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 16px; }
 .brand-mark { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #2768e8; }
 .sidebar-caption { margin: 10px 8px 18px; color: #8e9ab0; font-size: 12px; }
-.sidebar-nav { display: flex; flex-direction: column; gap: 18px; }
+.sidebar-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 18px; padding-right: 4px; }
 .sidebar-group { display: grid; gap: 4px; }
 .sidebar-group-title { margin: 0 8px 4px; color: #8e9ab0; font-size: 12px; }
 .nav-link { padding: 10px 11px; border-radius: 8px; color: #d7dfed; text-decoration: none; font-size: 13px; }
 .nav-link:hover, .nav-link.active { color: #fff; background: #2b69df; }
-.account-summary { margin-top: auto; padding: 16px 8px 0; border-top: 1px solid rgba(255,255,255,.12); }
+.account-summary { margin-top: 16px; padding: 16px 8px 0; border-top: 1px solid rgba(255,255,255,.12); }
 .account-summary strong, .account-summary span { display: block; }
 .account-summary strong { color: #fff; font-size: 13px; }
 .account-summary span { margin-top: 4px; color: #9ba8bb; font-size: 12px; }
@@ -139,8 +140,8 @@ textarea {
 
 @media (max-width: 720px) {
   .app-shell { grid-template-columns: 1fr; }
-  .sidebar { padding: 14px; }
-  .sidebar-nav { gap: 14px; }
+  .sidebar { position: static; height: auto; min-height: 0; overflow: visible; padding: 14px; }
+  .sidebar-nav { flex: none; overflow: visible; gap: 14px; padding-right: 0; }
   .sidebar-group { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; }
   .sidebar-group-title { grid-column: 1 / -1; }
   .account-summary { margin-top: 18px; }
