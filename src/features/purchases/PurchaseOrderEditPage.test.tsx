@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PurchaseOrderEditPage } from './PurchaseOrderEditPage';
@@ -13,7 +14,10 @@ function renderPage() { return render(<MemoryRouter><PurchaseOrderEditPage /></M
 describe('PurchaseOrderEditPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.listProducts.mockResolvedValue([{ id: 'p1', name: '积木', sku: 'J-1', costPrice: 10, salePrice: 20, stockQty: 0, status: 'active' }]);
+    mocks.listProducts.mockResolvedValue([
+      { id: 'p1', name: '积木', sku: 'J-1', costPrice: 10, salePrice: 20, stockQty: 0, status: 'active' },
+      { id: 'p2', name: '小车', sku: 'C-1', costPrice: 30, salePrice: 50, stockQty: 0, status: 'active' },
+    ]);
     mocks.listSuppliers.mockResolvedValue([{ id: 's1', name: '童趣贸易', status: 'active' }]);
     mocks.savePurchaseOrderDraft.mockResolvedValue('o1');
     mocks.confirmPurchaseOrder.mockResolvedValue(undefined);
@@ -30,6 +34,27 @@ describe('PurchaseOrderEditPage', () => {
     expect(screen.getByText('合计 ¥25.00')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '移除积木' }));
     expect(screen.getByText('请添加商品')).toBeInTheDocument();
+  });
+
+  it('adds_the_first_available_product_and_allows_changing_it_in_the_row', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('新建采购单');
+
+    expect(screen.queryByRole('combobox', { name: '选择商品' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '添加商品' }));
+
+    const productSelect = screen.getByRole('combobox', { name: '采购商品-1' });
+    expect(screen.getByLabelText('采购单价-积木')).toHaveValue('10.00');
+    await user.click(productSelect);
+    await user.click(await screen.findByText('小车 · C-1'));
+
+    expect(screen.getByLabelText('采购单价-小车')).toHaveValue('30.00');
+    expect(screen.getByText('合计 ¥30.00')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: '添加商品' }));
+    expect(screen.getByRole('combobox', { name: '采购商品-2' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '添加商品' })).toBeDisabled();
   });
 
   it('saves_then_confirms_the_same_order', async () => {

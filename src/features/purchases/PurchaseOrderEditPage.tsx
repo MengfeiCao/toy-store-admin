@@ -18,7 +18,6 @@ export function PurchaseOrderEditPage({ orderId }: { orderId?: string }) {
   const [activeOrderId, setActiveOrderId] = useState(orderId);
   const [products, setProducts] = useState<ProductListItem[]>([]);
   const [suppliers, setSuppliers] = useState<SupplierListItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +30,6 @@ export function PurchaseOrderEditPage({ orderId }: { orderId?: string }) {
     ]).then(([productRows, supplierRows, detail]) => {
       setProducts(productRows);
       setSuppliers(supplierRows);
-      setSelectedProduct(productRows[0]?.id ?? '');
       form.setFieldsValue(detail ? {
         supplierId: detail.supplierId,
         remark: detail.remark ?? '',
@@ -70,23 +68,31 @@ export function PurchaseOrderEditPage({ orderId }: { orderId?: string }) {
         <Form.Item label="供应商" name="supplierId" rules={[{ required: true, message: '请选择供应商' }]}><Select aria-label="选择供应商" options={suppliers.map((supplier) => ({ value: supplier.id, label: supplier.name }))} /></Form.Item>
         <Form.Item label="备注" name="remark"><Input.TextArea rows={2} /></Form.Item>
         <Form.List name="items">
-          {(fields, { add, remove }) => <>
-            <Space style={{ marginBottom: 16 }}>
-              <Select aria-label="选择商品" value={selectedProduct} onChange={setSelectedProduct} options={products.map((product) => ({ value: product.id, label: `${product.name} · ${product.sku}` }))} style={{ width: 280 }} />
-              <Button onClick={() => {
-                if (!selectedProduct || items.some((item) => item.productId === selectedProduct)) return;
-                const product = products.find((row) => row.id === selectedProduct);
-                add({ productId: selectedProduct, quantity: 1, unitCost: product?.costPrice ?? 0 });
-              }}>添加商品</Button>
-            </Space>
-            <Table rowKey="key" pagination={false} dataSource={fields} locale={{ emptyText: '请添加商品' }} columns={[
-              { title: '商品', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <>{product?.name ?? item?.productId}<span className="table-sub">SKU · {product?.sku ?? '—'}</span><Form.Item name={[field.name, 'productId']} hidden><Input /></Form.Item></>; } },
-              { title: '采购数量', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Form.Item name={[field.name, 'quantity']} rules={[{ required: true }]} noStyle><InputNumber aria-label={`采购数量-${product?.name ?? ''}`} min={1} precision={0} /></Form.Item>; } },
-              { title: '采购单价', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Form.Item name={[field.name, 'unitCost']} rules={[{ required: true }]} noStyle><InputNumber aria-label={`采购单价-${product?.name ?? ''}`} min={0} precision={2} /></Form.Item>; } },
-              { title: '小计', render: (_, field) => { const item = items[field.name]; return `¥${(Number(item?.quantity || 0) * Number(item?.unitCost || 0)).toFixed(2)}`; } },
-              { title: '操作', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Button type="link" aria-label={`移除${product?.name ?? '商品'}`} onClick={() => remove(field.name)}>移除</Button>; } },
-            ]} />
-          </>}
+          {(fields, { add, remove }) => {
+            const nextProduct = products.find((product) => !items.some((item) => item.productId === product.id));
+            return (
+              <>
+                <Button disabled={!nextProduct} style={{ marginBottom: 16 }} onClick={() => {
+                  if (!nextProduct) return;
+                  add({ productId: nextProduct.id, quantity: 1, unitCost: nextProduct.costPrice });
+                }}>添加商品</Button>
+                <Table rowKey="key" pagination={false} dataSource={fields} locale={{ emptyText: '请添加商品' }} columns={[
+                  { title: '商品', render: (_, field) => <Form.Item name={[field.name, 'productId']} rules={[{ required: true, message: '请选择商品' }]} noStyle><Select virtual={false} aria-label={`采购商品-${field.name + 1}`} onChange={(productId) => {
+                    const product = products.find((row) => row.id === productId);
+                    form.setFieldValue(['items', field.name, 'unitCost'], product?.costPrice ?? 0);
+                  }} options={products.map((product) => ({
+                    value: product.id,
+                    label: `${product.name} · ${product.sku}`,
+                    disabled: items.some((item, index) => index !== field.name && item.productId === product.id),
+                  }))} /></Form.Item> },
+                  { title: '采购数量', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Form.Item name={[field.name, 'quantity']} rules={[{ required: true }]} noStyle><InputNumber aria-label={`采购数量-${product?.name ?? ''}`} min={1} precision={0} /></Form.Item>; } },
+                  { title: '采购单价', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Form.Item name={[field.name, 'unitCost']} rules={[{ required: true }]} noStyle><InputNumber aria-label={`采购单价-${product?.name ?? ''}`} min={0} precision={2} /></Form.Item>; } },
+                  { title: '小计', render: (_, field) => { const item = items[field.name]; return `¥${(Number(item?.quantity || 0) * Number(item?.unitCost || 0)).toFixed(2)}`; } },
+                  { title: '操作', render: (_, field) => { const item = items[field.name]; const product = products.find((row) => row.id === item?.productId); return <Button type="link" aria-label={`移除${product?.name ?? '商品'}`} onClick={() => remove(field.name)}>移除</Button>; } },
+                ]} />
+              </>
+            );
+          }}
         </Form.List>
         <div className="stock-summary">合计 ¥{total.toFixed(2)}</div>
         {error && <Alert type="error" message={error} role="alert" showIcon />}
