@@ -16,8 +16,6 @@ import { PurchaseOrderListPage } from '../features/purchases/PurchaseOrderListPa
 import { PurchaseOrderEditPage } from '../features/purchases/PurchaseOrderEditPage';
 import { PurchaseOrderDetailPage } from '../features/purchases/PurchaseOrderDetailPage';
 import { PurchaseReceiptListPage } from '../features/purchases/PurchaseReceiptListPage';
-import { InventoryPage } from '../features/inventory/InventoryPage';
-import { StockAlertsPage } from '../features/inventory/StockAlertsPage';
 import { StockCountListPage } from '../features/inventory/StockCountListPage';
 import { StockCountDetailPage } from '../features/inventory/StockCountDetailPage';
 import { StockAdjustmentPage } from '../features/inventory/StockAdjustmentPage';
@@ -92,8 +90,6 @@ export function AppRoutes() {
           <Route path="/purchases/:id" element={<PurchaseOrderEditRoute />} />
           <Route path="/purchases/:id/detail" element={<PurchaseOrderDetailRoute />} />
           <Route path="/purchase-receipts" element={<PurchaseReceiptListPage />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/stock-alerts" element={<StockAlertsPage />} />
           <Route path="/stock-counts" element={<StockCountListPage />} />
           <Route path="/stock-counts/:id" element={<StockCountDetailRoute />} />
           <Route path="/stock-adjustments" element={<StockAdjustmentPage />} />

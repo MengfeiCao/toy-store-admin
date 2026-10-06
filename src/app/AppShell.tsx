@@ -5,8 +5,6 @@ const navGroups = [
   { label: '经营', items: [{ to: '/dashboard', label: '经营概览' }, { to: '/reports', label: '经营报表' }] },
   { label: '商品与库存', items: [
     { to: '/products', label: '玩具管理' },
-    { to: '/inventory', label: '当前库存' },
-    { to: '/stock-alerts', label: '库存预警' },
     { to: '/stock-counts', label: '库存盘点' },
     { to: '/stock-adjustments', label: '库存调整' },
     { to: '/records', label: '库存流水' },

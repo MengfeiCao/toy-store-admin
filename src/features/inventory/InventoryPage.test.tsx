@@ -1,3 +1,0 @@
-import { render, screen } from '@testing-library/react'; import { describe, expect, it, vi } from 'vitest'; import { InventoryPage } from './InventoryPage';
-const mocks=vi.hoisted(()=>({listInventory:vi.fn()})); vi.mock('./inventory.api',()=>mocks);
-describe('InventoryPage',()=>{it('shows_stock_alerts_without_cost',async()=>{mocks.listInventory.mockResolvedValue([{id:'p1',sku:'J-1',name:'积木',category:'积木',stockQty:2,lowStockThreshold:3,status:'active'}]);render(<InventoryPage />);expect(await screen.findByText('J-1')).toBeInTheDocument();expect(screen.getByText('库存不足')).toBeInTheDocument();expect(screen.queryByText('成本')).not.toBeInTheDocument();});});

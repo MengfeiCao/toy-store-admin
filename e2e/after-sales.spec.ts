@@ -69,8 +69,8 @@ test('已付款订单部分退货退款并完成同款换货', async ({ page }) 
   await expect(page).toHaveURL(/\/after-sales\/.+/);
   await expect(page.getByText('换货', { exact: true })).toBeVisible();
 
-  await page.goto('/inventory');
-  await page.getByLabel('搜索库存').fill(sku);
+  await page.goto('/products');
+  await page.getByLabel('搜索玩具').fill(sku);
   await expect(page.locator('tbody tr').filter({ hasText: sku })).toContainText('2 件');
 
   await page.goto('/records');

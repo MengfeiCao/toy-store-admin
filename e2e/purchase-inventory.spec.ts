@@ -54,8 +54,8 @@ test('采购分批到货、付款、库存调整与预警闭环', async ({ page 
   await page.getByRole('tooltip').getByRole('button', { name: /确\s*认/ }).click();
   await expect(page.getByRole('cell', { name: '已付款', exact: true })).toBeVisible();
 
-  await page.goto('/inventory');
-  await page.getByLabel('搜索库存').fill(sku);
+  await page.goto('/products');
+  await page.getByLabel('搜索玩具').fill(sku);
   await expect(page.locator('tbody tr').filter({ hasText: sku })).toContainText('10 件');
 
   await page.goto('/stock-adjustments');
@@ -63,8 +63,8 @@ test('采购分批到货、付款、库存调整与预警闭环', async ({ page 
   await page.getByLabel(`调整数量-${productName}`).fill('8');
   await page.getByRole('button', { name: '提交调整' }).click();
 
-  await page.goto('/stock-alerts');
-  await page.getByLabel('搜索库存').fill(sku);
+  await page.goto('/products');
+  await page.getByLabel('搜索玩具').fill(sku);
   const alertRow = page.locator('tbody tr').filter({ hasText: sku });
   await expect(alertRow).toContainText('2 件');
   await expect(alertRow).toContainText('库存不足');

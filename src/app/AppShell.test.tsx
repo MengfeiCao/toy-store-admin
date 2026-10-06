@@ -16,7 +16,8 @@ describe('AppShell', () => {
 
     expect(screen.getByRole('navigation', { name: '主导航' })).toHaveClass('sidebar-nav');
     expect(screen.getByText('商品与库存')).toHaveClass('sidebar-group-title');
-    expect(screen.getByRole('link', { name: '当前库存' })).toHaveClass('nav-link');
-    expect(screen.getByRole('link', { name: '当前库存' }).parentElement).toHaveClass('sidebar-group');
+    expect(screen.getByRole('link', { name: '玩具管理' })).toHaveClass('nav-link');
+    expect(screen.queryByRole('link', { name: '当前库存' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: '库存预警' })).not.toBeInTheDocument();
   });
 });
