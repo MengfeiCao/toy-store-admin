@@ -44,8 +44,8 @@ test.describe('核心业务闭环', () => {
 
     await page.goto('/purchases/new');
     await expect(page.getByText(supplierName)).toBeVisible();
-    await expect(page.getByText(`${productName} · ${sku}`)).toBeVisible();
     await page.getByRole('button', { name: '添加商品' }).click();
+    await expect(page.getByText(`${productName} · ${sku}`)).toBeVisible();
     await page.getByLabel(`采购数量-${productName}`).fill('10');
     await page.getByLabel(`采购单价-${productName}`).fill('60');
     await page.getByRole('button', { name: '确认采购单' }).click();
