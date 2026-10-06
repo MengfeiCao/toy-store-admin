@@ -36,6 +36,7 @@ export function AppShell() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">跳到主要内容</a>
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="brand"><span className="brand-mark">乐</span><span>乐奇玩具</span></div>
@@ -46,7 +47,7 @@ export function AppShell() {
         </nav>
         <div className="account-summary"><strong>{profile?.name}</strong><span>{profile?.role === 'owner' ? '店主' : '店员'}</span><button type="button" onClick={handleSignOut}>退出登录</button></div>
       </aside>
-      <main className="app-content"><Outlet /></main>
+      <main className="app-content" id="main-content"><Outlet /></main>
     </div>
   );
 }

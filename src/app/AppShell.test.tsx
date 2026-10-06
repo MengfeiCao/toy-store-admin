@@ -21,4 +21,12 @@ describe('AppShell', () => {
     expect(screen.queryByRole('link', { name: '库存预警' })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: '历史手工入库' })).not.toBeInTheDocument();
   });
+
+  it('provides_a_skip_link_to_the_main_content', () => {
+    render(<MemoryRouter initialEntries={['/dashboard']}><AppShell /></MemoryRouter>);
+
+    expect(screen.getByRole('link', { name: '跳到主要内容' }))
+      .toHaveAttribute('href', '#main-content');
+    expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
+  });
 });
