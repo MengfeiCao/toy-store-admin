@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Table, Tag, type TableColumnsType } from 'antd';
+import { Image, Table, Tag, type TableColumnsType } from 'antd';
 import { useAuth } from '../../auth/AuthProvider';
-import { listProducts, setProductStatus } from './products.api';
+import { getProductImageUrl, listProducts, setProductStatus } from './products.api';
 import type { ProductFilters, ProductListItem, ProductStatus } from './product.types';
 import { ProductFormDrawer } from './ProductFormDrawer';
 
@@ -12,6 +12,16 @@ type StockStatus = 'low' | 'normal' | 'unset';
 function getStockStatus(product: ProductListItem): StockStatus {
   if (product.lowStockThreshold === null || product.lowStockThreshold === undefined) return 'unset';
   return product.stockQty <= product.lowStockThreshold ? 'low' : 'normal';
+}
+
+function ProductThumbnail({ product }: { product: ProductListItem }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!product.imagePath || failed) {
+    return <span style={{ alignItems: 'center', background: '#f2f4f7', borderRadius: 8, color: '#98a2b3', display: 'inline-flex', flex: '0 0 48px', fontSize: 12, height: 48, justifyContent: 'center', width: 48 }}>无图</span>;
+  }
+
+  return <Image width={48} height={48} src={getProductImageUrl(product.imagePath)} alt={`${product.name}商品图片`} style={{ borderRadius: 8, objectFit: 'cover' }} onError={() => setFailed(true)} />;
 }
 
 export function ProductListPage() {
@@ -38,7 +48,7 @@ export function ProductListPage() {
   }
 
   const columns: TableColumnsType<ProductListItem> = [
-    { title: '玩具', render: (_, product) => <><strong>{product.name}</strong><span className="table-sub">SKU · {product.sku}</span></> },
+    { title: '玩具', render: (_, product) => <div style={{ alignItems: 'center', display: 'flex', gap: 12 }}><ProductThumbnail product={product} /><div><strong>{product.name}</strong><span className="table-sub">SKU · {product.sku}</span></div></div> },
     { title: '分类', dataIndex: 'category' },
     { title: '售价', dataIndex: 'salePrice', render: (value: number) => money(value) },
     ...(role === 'owner' ? [{ title: '成本价', dataIndex: 'costPrice', render: (value: number | null) => value === null ? '—' : money(value) }] : []),

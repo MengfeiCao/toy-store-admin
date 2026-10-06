@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ProductListPage } from './ProductListPage';
@@ -7,12 +7,14 @@ const mocks = vi.hoisted(() => ({
   useAuth: vi.fn(),
   listProducts: vi.fn(),
   setProductStatus: vi.fn(),
+  getProductImageUrl: vi.fn(),
 }));
 
 vi.mock('../../auth/AuthProvider', () => ({ useAuth: mocks.useAuth }));
 vi.mock('./products.api', () => ({
   listProducts: mocks.listProducts,
   setProductStatus: mocks.setProductStatus,
+  getProductImageUrl: mocks.getProductImageUrl,
 }));
 
 describe('ProductListPage', () => {
@@ -37,6 +39,40 @@ describe('ProductListPage', () => {
     expect(screen.queryByText('新增玩具')).not.toBeInTheDocument();
     expect(screen.queryByText('成本价')).not.toBeInTheDocument();
     expect(screen.getByText('7 件')).toBeInTheDocument();
+  });
+
+  it('shows_product_thumbnail_with_preview_and_no_image_placeholder', async () => {
+    const user = userEvent.setup();
+    mocks.useAuth.mockReturnValue({ profile: { role: 'owner' } });
+    mocks.getProductImageUrl.mockReturnValue('https://example.com/dino.png');
+    mocks.listProducts.mockResolvedValue([
+      { id: 'p1', sku: 'DLJM-001', name: '恐龙积木', category: '积木', salePrice: 100, costPrice: 60, stockQty: 7, imagePath: 'dino.png', status: 'active' },
+      { id: 'p2', sku: 'NO-IMAGE', name: '无图玩具', category: '积木', salePrice: 80, costPrice: 40, stockQty: 2, imagePath: null, status: 'active' },
+    ]);
+
+    render(<ProductListPage />);
+
+    const thumbnail = await screen.findByRole('img', { name: '恐龙积木商品图片' });
+    expect(thumbnail).toHaveAttribute('src', 'https://example.com/dino.png');
+    expect(screen.getByText('无图')).toBeInTheDocument();
+
+    await user.click(thumbnail);
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('shows_no_image_placeholder_when_thumbnail_fails_to_load', async () => {
+    mocks.useAuth.mockReturnValue({ profile: { role: 'owner' } });
+    mocks.getProductImageUrl.mockReturnValue('https://example.com/missing.png');
+    mocks.listProducts.mockResolvedValue([
+      { id: 'p1', sku: 'BROKEN-IMAGE', name: '图片失效玩具', category: '积木', salePrice: 100, costPrice: 60, stockQty: 7, imagePath: 'missing.png', status: 'active' },
+    ]);
+
+    render(<ProductListPage />);
+
+    const thumbnail = await screen.findByRole('img', { name: '图片失效玩具商品图片' });
+    fireEvent.error(thumbnail);
+
+    expect(await screen.findByText('无图')).toBeInTheDocument();
   });
 
   it('filters_stock_status_from_the_table_header', async () => {
