@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Button, Input, Select, Space, Table } from 'antd';
+import { Alert, Button, Input, InputNumber, Select, Space, Table } from 'antd';
 import type { InputRef } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { listCustomers } from '../customers/customers.api';
@@ -43,6 +43,15 @@ export function QuickSalePage() {
     }
   }
 
+  function updateQuantity(productId: string, value: number | null) {
+    setItems((rows) => rows.map((item) => {
+      if (item.id !== productId) return item;
+      const quantity = Math.max(1, Math.min(item.stockQty, Math.floor(value ?? 1)));
+      if ((value ?? 1) > item.stockQty) setError(`库存不足，${item.name}当前仅有 ${item.stockQty} 件`);
+      return { ...item, quantity };
+    }));
+  }
+
   async function submit(confirm: boolean) {
     if (items.length === 0) { setError('请先扫描商品'); return; }
     setSaving(true); setError('');
@@ -67,7 +76,9 @@ export function QuickSalePage() {
     <Table rowKey="id" dataSource={items} pagination={false} columns={[
       { title: '商品', dataIndex: 'name' }, { title: 'SKU', dataIndex: 'sku' },
       { title: '单价', dataIndex: 'salePrice', render: (value: number) => `¥${value.toFixed(2)}` },
-      { title: '数量', dataIndex: 'quantity' },
+      { title: '数量', render: (_, item: QuickSaleItem) => <InputNumber aria-label={`数量-${item.name}`} min={1} max={item.stockQty} precision={0} value={item.quantity} onChange={(value) => updateQuantity(item.id, value)} onBlur={(event) => {
+        if (Number(event.target.value) > item.stockQty) setError(`库存不足，${item.name}当前仅有 ${item.stockQty} 件`);
+      }} /> },
       { title: '小计', render: (_, item) => `¥${(item.salePrice * item.quantity).toFixed(2)}` },
       { title: '操作', render: (_, item) => <Button type="link" danger onClick={() => setItems((rows) => rows.filter((row) => row.id !== item.id))}>移除</Button> },
     ]} locale={{ emptyText: '等待扫描商品' }} />

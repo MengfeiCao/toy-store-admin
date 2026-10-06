@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -22,7 +22,7 @@ describe('QuickSalePage', () => {
     await userEvent.type(input, '690001{enter}');
     await screen.findByText('积木');
     await userEvent.type(input, '690001{enter}');
-    expect(await screen.findByText('2')).toBeInTheDocument();
+    expect(await screen.findByRole('spinbutton', { name: '数量-积木' })).toHaveValue('2');
     expect(screen.getByText('合计 ¥40.00')).toBeInTheDocument();
   });
 
@@ -36,6 +36,24 @@ describe('QuickSalePage', () => {
     await screen.findByText('积木');
     await userEvent.type(input, '690001{enter}');
     expect(await screen.findByText('库存不足，积木当前仅有 1 件')).toBeInTheDocument();
+  });
+
+  it('lets_the_cashier_change_quantity_without_exceeding_stock', async () => {
+    mocks.getProductByBarcode.mockResolvedValue({ id: 'p1', sku: 'J-1', barcode: '690001', name: '积木', salePrice: 20, stockQty: 3 });
+    renderPage();
+    const scanner = screen.getByRole('textbox', { name: '扫描商品条码' });
+    await userEvent.type(scanner, '690001{enter}');
+    await screen.findByText('积木');
+
+    const quantity = screen.getByRole('spinbutton', { name: '数量-积木' });
+    fireEvent.change(quantity, { target: { value: '2' } });
+    expect(quantity).toHaveValue('2');
+    expect(screen.getByText('合计 ¥40.00')).toBeInTheDocument();
+
+    fireEvent.change(quantity, { target: { value: '4' } });
+    fireEvent.blur(quantity);
+    await waitFor(() => expect(quantity).toHaveValue('3'));
+    expect(await screen.findByText('库存不足，积木当前仅有 3 件')).toBeInTheDocument();
   });
 
   it('reuses_the_sales_order_api_for_direct_confirmation', async () => {
