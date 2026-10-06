@@ -56,7 +56,12 @@ describe('ProductListPage', () => {
     expect(screen.getByText('库存正常')).toBeInTheDocument();
     expect(screen.getByText('未设置预警')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: '筛选库存状态' }));
+    const filterTrigger = document.querySelector<HTMLElement>('.ant-table-filter-trigger');
+    expect(filterTrigger).toBeInTheDocument();
+    expect(filterTrigger).not.toHaveTextContent('筛选');
+    expect(filterTrigger?.querySelector('svg')).toBeInTheDocument();
+
+    await user.click(filterTrigger!);
     await user.click(screen.getByRole('menuitem', { name: '库存不足' }));
     await user.click(screen.getByRole('button', { name: 'OK' }));
 

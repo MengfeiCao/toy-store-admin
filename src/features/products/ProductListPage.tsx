@@ -52,7 +52,6 @@ export function ProductListPage() {
         { text: '未设置预警', value: 'unset' },
       ],
       filterMultiple: false,
-      filterIcon: <span aria-label="筛选库存状态">筛选</span>,
       onFilter: (value, product) => getStockStatus(product) === value,
       render: (_, product) => {
         const status = getStockStatus(product);
