@@ -8,7 +8,6 @@ const navGroups = [
     { to: '/stock-counts', label: '库存盘点' },
     { to: '/stock-adjustments', label: '库存调整' },
     { to: '/records', label: '库存流水' },
-    { to: '/stock-in', label: '历史手工入库' },
   ] },
   { label: '采购', items: [
     { to: '/suppliers', label: '供应商' },
