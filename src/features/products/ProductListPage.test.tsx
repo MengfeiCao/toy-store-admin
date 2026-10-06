@@ -24,7 +24,9 @@ describe('ProductListPage', () => {
 
     render(<ProductListPage />);
 
-    expect(await screen.findByText('新增玩具')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: '新增玩具' })).toHaveClass('ant-btn');
+    expect(screen.getByRole('searchbox', { name: '搜索玩具' })).toHaveClass('ant-input');
+    expect(screen.getByRole('combobox', { name: '商品状态' })).toBeInTheDocument();
     expect(await screen.findByText('¥60.00')).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: '成本价' })).toBeInTheDocument();
   });
@@ -104,5 +106,16 @@ describe('ProductListPage', () => {
     expect(screen.getByText('低库存玩具')).toBeInTheDocument();
     expect(screen.queryByText('库存正常玩具')).not.toBeInTheDocument();
     expect(screen.queryByText('未设置预警玩具')).not.toBeInTheDocument();
+  });
+
+  it('shows_product_load_errors_with_the_shared_alert', async () => {
+    mocks.useAuth.mockReturnValue({ profile: { role: 'owner' } });
+    mocks.listProducts.mockRejectedValue(new Error('商品加载失败'));
+
+    render(<ProductListPage />);
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('商品加载失败');
+    expect(alert).toHaveClass('ant-alert');
   });
 });

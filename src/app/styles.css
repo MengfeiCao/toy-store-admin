@@ -95,18 +95,17 @@ textarea {
 .btn-primary { background: var(--color-primary); color: #fff; }
 .btn-secondary { background: #eef2f7; color: var(--color-text); }
 .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
-.search-input, .filter-select, .product-form input { width: 100%; padding: 10px 11px; border: 1px solid #dfe4ec; border-radius: 8px; background: #fff; color: #172033; }
-.search-input { max-width: 320px; }
-.filter-select { max-width: 160px; }
+.product-form input { width: 100%; padding: 10px 11px; border: 1px solid #dfe4ec; border-radius: 8px; background: #fff; color: #172033; }
+.product-search { width: min(360px, 100%); }
+.product-status-filter { width: 140px; }
+.page-alert { margin-bottom: 16px; }
 .table-panel { overflow-x: auto; background: #fff; border: 1px solid #e7ebf2; border-radius: 12px; }
 .table-panel table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table-panel th, .table-panel td { padding: 13px 14px; text-align: left; border-bottom: 1px solid #eef1f5; white-space: nowrap; }
 .table-panel th { color: #667085; font-weight: 500; background: #f8fafc; }
 .table-panel tr:last-child td { border-bottom: 0; }
 .table-sub, .form-hint { display: block; color: #667085; font-size: 11px; margin-top: 4px; }
-.status-pill { display: inline-block; padding: 4px 8px; border-radius: 99px; background: #e9f8f0; color: #178a55; font-size: 11px; }
-.status-pill.muted { background: #eef2f7; color: #667085; }
-.text-button, .drawer-close { border: 0; padding: 0; margin-right: 10px; color: #2768e8; background: none; font-size: 12px; }
+.drawer-close { border: 0; padding: 0; margin-right: 10px; color: var(--color-primary); background: none; font-size: 12px; }
 .stock-form-panel { padding: 22px; }
 .stock-form { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 14px; }
 .stock-form label { display: grid; gap: 7px; color: #667085; font-size: 12px; }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Table, Tag, type TableColumnsType } from 'antd';
+import { Alert, Button, Image, Input, Select, Space, Table, Tag, type TableColumnsType } from 'antd';
 import { useAuth } from '../../auth/AuthProvider';
 import { getProductImageUrl, listProducts, setProductStatus } from './products.api';
 import type { ProductFilters, ProductListItem, ProductStatus } from './product.types';
@@ -70,15 +70,18 @@ export function ProductListPage() {
         return <Tag>未设置预警</Tag>;
       },
     },
-    { title: '商品状态', render: (_, product) => <span className={product.status === 'active' ? 'status-pill' : 'status-pill muted'}>{product.status === 'active' ? '在售' : '停用'}</span> },
-    { title: '操作', render: (_, product) => <><button className="text-button" type="button" onClick={() => { setEditingProduct(product); setDrawerOpen(true); }}>编辑</button>{role === 'owner' && <button className="text-button" type="button" onClick={() => void toggleStatus(product)}>{product.status === 'active' ? '停用' : '启用'}</button>}</> },
+    { title: '商品状态', render: (_, product) => product.status === 'active' ? <Tag color="green">在售</Tag> : <Tag>停用</Tag> },
+    { title: '操作', render: (_, product) => <Space size={0}><Button type="link" size="small" onClick={() => { setEditingProduct(product); setDrawerOpen(true); }}>编辑</Button>{role === 'owner' && <Button type="link" size="small" danger={product.status === 'active'} onClick={() => void toggleStatus(product)}>{product.status === 'active' ? '停用' : '启用'}</Button>}</Space> },
   ];
 
   return (
     <section className="feature-page">
-      <div className="screen-head"><div><p className="eyebrow">商品资料</p><h1>玩具管理</h1><p>当前库存只由入库和出库事务维护，不能直接编辑。</p></div>{role === 'owner' && <button className="btn-primary" type="button" onClick={() => { setEditingProduct(null); setDrawerOpen(true); }}>新增玩具</button>}</div>
-      <div className="toolbar"><input className="search-input" placeholder="搜索名称、货号或条码" aria-label="搜索玩具" value={filters.query ?? ''} onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))} />{role === 'owner' && <select className="filter-select" aria-label="商品状态" value={filters.status ?? 'all'} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value as ProductStatus | 'all' }))}><option value="all">全部状态</option><option value="active">在售</option><option value="inactive">停用</option></select>}</div>
-      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="screen-head"><div><p className="eyebrow">商品资料</p><h1>玩具管理</h1><p>当前库存只由入库和出库事务维护，不能直接编辑。</p></div>{role === 'owner' && <Button type="primary" onClick={() => { setEditingProduct(null); setDrawerOpen(true); }}>新增玩具</Button>}</div>
+      <Space className="toolbar product-toolbar" wrap>
+        <Input.Search className="product-search" type="search" placeholder="搜索名称、货号或条码" aria-label="搜索玩具" value={filters.query ?? ''} onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))} />
+        {role === 'owner' && <Select className="product-status-filter" aria-label="商品状态" value={filters.status ?? 'all'} onChange={(status) => setFilters((current) => ({ ...current, status: status as ProductStatus | 'all' }))} options={[{ value: 'all', label: '全部状态' }, { value: 'active', label: '在售' }, { value: 'inactive', label: '停用' }]} />}
+      </Space>
+      {error && <Alert className="page-alert" type="error" message={error} role="alert" showIcon />}
       <Table rowKey="id" loading={loading} dataSource={products} columns={columns} pagination={false} locale={{ emptyText: '暂无玩具' }} scroll={{ x: 1000 }} />
       <ProductFormDrawer open={drawerOpen} role={role} product={editingProduct} onClose={() => setDrawerOpen(false)} onSaved={() => void load()} />
     </section>
