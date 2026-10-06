@@ -42,8 +42,8 @@ export function AppShell() {
       <aside className="sidebar">
         <div className="brand"><span className="brand-mark">乐</span><span>乐奇玩具</span></div>
         <p className="sidebar-caption">玩具销售后台</p>
-        <nav aria-label="主导航">
-          {groups.map((group) => <div key={group.label}><p className="sidebar-caption">{group.label}</p>{group.items.map((item) => <NavLink key={item.to} to={item.to} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>{item.label}</NavLink>)}</div>)}
+        <nav className="sidebar-nav" aria-label="主导航">
+          {groups.map((group) => <div className="sidebar-group" key={group.label}><p className="sidebar-group-title">{group.label}</p>{group.items.map((item) => <NavLink key={item.to} to={item.to} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>{item.label}</NavLink>)}</div>)}
         </nav>
         <div className="account-summary"><strong>{profile?.name}</strong><span>{profile?.role === 'owner' ? '店主' : '店员'}</span><button type="button" onClick={handleSignOut}>退出登录</button></div>
       </aside>
