@@ -1,0 +1,23 @@
+import { useEffect, useState } from 'react';
+import { Alert, Button, Descriptions, Select, Space, Table, Tag } from 'antd';
+import { Link } from 'react-router-dom';
+import { getSalesOrder, markSalesOrderPaid, revertSalesOrderPayment, shipSalesOrder } from './sales.api';
+import type { PaymentMethod, SalesOrderDetail } from './sales.types';
+
+export function SalesOrderDetailPage({ orderId, role }: { orderId: string; role: 'owner' | 'staff' }) {
+  const [order, setOrder] = useState<SalesOrderDetail | null>(null);
+  const [method, setMethod] = useState<PaymentMethod>('wechat');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  async function load() { try { setOrder(await getSalesOrder(orderId)); } catch (cause) { setError(cause instanceof Error ? cause.message : '订单加载失败'); } }
+  useEffect(() => { void load(); }, [orderId]);
+  async function ship() { setBusy(true); setError(null); try { await shipSalesOrder(orderId); await load(); } catch (cause) { setError(cause instanceof Error ? cause.message : '出库失败'); await load(); } finally { setBusy(false); } }
+  async function markPaid() { setBusy(true); setError(null); try { await markSalesOrderPaid(orderId, method); await load(); } catch (cause) { setError(cause instanceof Error ? cause.message : '收款失败'); } finally { setBusy(false); } }
+  async function revertPayment() { setBusy(true); setError(null); try { await revertSalesOrderPayment(orderId); await load(); } catch (cause) { setError(cause instanceof Error ? cause.message : '撤销失败'); } finally { setBusy(false); } }
+  if (!order) return <section className="feature-page"><p className="form-hint">加载中…</p>{error && <Alert type="error" showIcon message={error} />}</section>;
+  const statusLabel = order.status === 'pending_shipment' ? '待出库' : order.status === 'completed' ? '已完成' : order.status === 'cancelled' ? '已取消' : '草稿';
+  return <section className="feature-page"><div className="screen-head"><div><p className="eyebrow">销售订单</p><h1>{order.orderNo}</h1><p>客户：{order.customerName} · 金额：¥{order.totalAmount.toFixed(2)}{order.refundedAmount ? ` · 已退款 ¥${order.refundedAmount.toFixed(2)}` : ''}</p></div><Tag color={order.status === 'completed' ? 'green' : order.status === 'cancelled' ? 'default' : 'blue'}>{statusLabel}</Tag></div><Descriptions bordered size="small" items={[{ key: 'customer', label: '客户', children: order.customerName }, { key: 'amount', label: '订单金额', children: `¥${order.totalAmount.toFixed(2)}` }, { key: 'refund', label: '已退款', children: `¥${(order.refundedAmount ?? 0).toFixed(2)}` }, { key: 'payment', label: '收款状态', children: order.paymentStatus === 'paid' ? '已收款' : '未收款' }]} /><Table rowKey="productId" dataSource={order.items} pagination={false} className="detail-table" columns={[
+    { title: '玩具', dataIndex: 'productName' }, { title: 'SKU', dataIndex: 'sku' }, { title: '售价', dataIndex: 'unitPrice', render: (value: number) => `¥${value.toFixed(2)}` },
+    { title: '数量', dataIndex: 'quantity' }, { title: '已售后', dataIndex: 'handledQuantity', render: (value?: number) => value ?? 0 }, { title: '小计', render: (_, item) => `¥${(item.unitPrice * item.quantity).toFixed(2)}` },
+  ]} />{error && <Alert type="error" showIcon message={error} />}<div className="drawer-actions"><Space wrap>{order.status === 'pending_shipment' && <Button type="primary" loading={busy} onClick={() => void ship()}>确认出库</Button>}{order.status === 'completed' && <Button href={`/sales/${order.id}/receipt`}>打印小票</Button>}{order.status === 'completed' && order.items.some((item) => (item.handledQuantity ?? 0) < item.quantity) && <Link to={`/sales/${order.id}/after-sales`}><Button>办理售后</Button></Link>}{order.status === 'completed' && order.paymentStatus === 'unpaid' && <><Select virtual={false} aria-label="付款方式" value={method} onChange={setMethod} options={[{ value: 'wechat', label: '微信' }, { value: 'alipay', label: '支付宝' }, { value: 'cash', label: '现金' }, { value: 'other', label: '其他' }]} /><Button type="primary" loading={busy} onClick={() => void markPaid()}>标记已收款{order.netAmount !== undefined && order.netAmount !== order.totalAmount ? ` ¥${order.netAmount.toFixed(2)}` : ''}</Button></>}{role === 'owner' && order.status === 'completed' && order.paymentStatus === 'paid' && <Button disabled={busy} onClick={() => void revertPayment()}>撤销收款</Button>}</Space></div></section>;
+}
